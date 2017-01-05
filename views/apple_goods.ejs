@@ -1,0 +1,656 @@
+<!Doctype html>
+<html lang="fa">
+<head>
+    <title>پروژه دانشجویی فروشگاه مجازی</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="stylesheets/bootstrap.min.css">
+    <link rel="stylesheet" href="stylesheets/bootstrap-rtl.min.css">
+    <link rel="stylesheet" href="stylesheets/F-css.css" type="text/css"/>
+    <link rel="stylesheet" href="stylesheets/notify.css" type="text/css"/>
+    <link rel="stylesheet" href="stylesheets/table-style.css" type="text/css"/>
+    <link rel="stylesheet" href="stylesheets/toaster.css" type="text/css"/>
+    <script src="javascripts/jquery.min.js"></script>
+    <script src="javascripts/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="ism/css/my-slider.css" />
+    <script src="ism/js/ism-2.2.min.js"></script>
+</head>
+<body>
+<% if(typeof data.enroll_res != 'undefined'){%>
+<div id="alert">
+    <a class="alert" href="#alert" style="top:10px"><%=data.enroll_res%></a>
+</div>
+<%data.enroll_res = undefined%>
+<%}%>
+<div class="container-fluid bg-1">
+    <div class="container bg-2">
+        <div class="header">
+            <div class="search-box text-center">
+                <form class="form-inline">
+                    <div class="form-group">
+                        <input class="text-center form-control" id="search-input" type="text" value="جستجوی محصولات" />
+                    </div>
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>جستجو
+                    </button>
+                </form>
+            </div>
+            <%if(data.role != 0){%>
+            <div dir="rtl">
+                <span> کاربر گرامی : <p style="color: red; display: inline"><%= data.name %></p> خوش آمدید! </span>
+            </div>
+            <%}%>
+            <nav class="navbar navbar-inverse">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+                <div class="container-fluid collapse navbar-collapse" id="myNavbar">
+                    <ul class="nav navbar-nav navbar-right" id="home">
+                        <li class="active"><a href="#">صفحه اصلی</a></li>
+                    </ul>
+
+                    <%if(data.role == 2){%>
+                    <ul class="nav navbar-nav navbar-right" id="product">
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">‍‍‍‍‍‍‍ پنل مدیریت<span class="caret"></span></a>
+                            <ul class="dropdown-menu navbar-inverse">
+                                <li><a class="text-right" href="#user_management_pop" data-toggle="modal">مدیریت کاربران</a></li>
+                                <li><a class="text-right" data-dismiss="modal" data-toggle="modal" href="#goods_management_pop">مدیریت انبار</a></li>
+                                <li><a class="text-right" data-dismiss="modal" data-toggle="modal" href="#report_management_pop">گزارش گیری</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <%}%>
+
+                    <ul class="nav navbar-nav navbar-right" id="product">
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">محصولات<span class="caret"></span></a>
+                            <ul class="dropdown-menu navbar-inverse">
+                                <li><a class="text-right" href="/apple">اپل</a></li>
+                                <li><a class="text-right" href="/samsung">سامسونگ</a></li>
+                                <li><a class="text-right" href="/lg">الجی</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right" id="about">
+                        <li><a href="#">درباره ما</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right" id="question">
+                        <li><a href="#">سوالات متداول</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right" id="contact">
+                        <li><a href="#">تماس با ما</a></li>
+                    </ul>
+                    <%if(data.role == 0){%>
+                    <ul class="nav navbar-nav">
+                        <li><a href="#login_pop" data-toggle="modal"><span class="glyphicon glyphicon-user"></span>حساب کاربری</a></li>
+                    </ul>
+                    <%}%>
+                    <%if(data.role == 1){%>
+                    <ul class="nav navbar-nav navbar-right" id="edit">
+                        <li><a href="#user_edit_pop" data-dismiss="modal" data-toggle="modal">ویرایش اطلاعات</a></li>
+                    </ul>
+                    <%}%>
+                    <%if(data.role != 0){%>
+                    <ul class="nav navbar-nav navbar-right" id="exit">
+                        <li><a href="/logout">خروج</a></li>
+                    </ul>
+                    <%}%>
+                    <%if(data.role == 1){%>
+                    <ul class="nav navbar-nav pull-left">
+                        <li><a href="#shoping_cart_pop" data-toggle="modal" data-dismiss="modal" id="cart-btn"><i class="glyphicon glyphicon-shopping-cart"></i>
+                                سبد خرید
+                                <input class="hidden" id="cart_user_id" value="<%=data._id%>">
+                                <span id="cart_count"><%=data.count%></span>
+                            </a>
+                        </li>
+                    </ul>
+                    <%}%>
+                </div>
+            </nav>
+        </div>
+        <!--////////////Modal Segment//////////-->
+
+        <!-- signin Modal -->
+        <div class="modal fade" id="login_pop" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header" style="padding:15px 250px;">
+                        <h4 dir="rtl"><span class="glyphicon glyphicon-lock"></span> ورود</h4>
+                    </div>
+                    <div class="modal-body" style="padding:40px 50px;">
+                        <form action="/login" method="post">
+                            <div dir="rtl" class="form-group">
+                                <label for="usrname"><span class="glyphicon glyphicon-user"></span> نام کاربری </label>
+                                <input type="text" class="form-control" name="username">
+                            </div>
+                            <div dir="rtl" class="form-group">
+                                <label for="psw"><span class="glyphicon glyphicon-eye-open"></span> کلمه عبور </label>
+                                <input type="password" class="form-control" name="password">
+                            </div>
+                            <div dir="rtl">
+                                <input type="checkbox" name="checkboxe" checked><label>مرا به خاطر بسپار</label>
+                            </div>
+                            <button type="submit" class="btn btn-success btn-block"><span class="glyphicon glyphicon-off"></span> ورود</button>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-danger btn-default pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> بستن</button>
+                        <a class="pull-right" data-dismiss="modal" data-toggle="modal" href="#signup_pop"> ثبت نام</a>
+                        <p class="pull-right">  -  بازیابی<a href="#"> پسورد</a> </p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- signup Modal -->
+    <div class="modal fade" id="signup_pop" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header" style="padding:15px 250px;">
+                    <h4 dir="rtl"><span class="glyphicon glyphicon-user"></span>ثبت نام</h4>
+                </div>
+                <div class="modal-body" style="padding:10px 50px;">
+                    <form action="/enroll" method="post">
+                        <div dir="rtl" class="form-group">
+                            <input type="text"  name="first_name" placeholder="نام">
+                            <input type="text" class="pull-left" name="last_name" placeholder="نام خانوادگی">
+                        </div>
+                        <div dir="rtl" class="form-group">
+                            <input type="text"  name="username" placeholder="نام کاربری">
+                            <input type="password" class="pull-left" name="password" placeholder="کلمه عبور">
+                        </div>
+                        <div dir="rtl" class="form-group">
+                            <input  type="text"  name="number" placeholder="شماره تماس">
+                            <input dir="ltr" type="text" class="pull-left" name="email" placeholder="email">
+                        </div>
+                        <div style="padding: 0px 0px 10px;">
+                            <input dir="rtl" class="form-control" type="text" name="address" placeholder="آدرس">
+                        </div>
+                        <button type="submit" class="btn btn-success btn-block"><span class="glyphicon glyphicon-off"></span> ثبت نام</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger btn-default pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> بستن</button>
+                    <a href="#login_pop" data-dismiss="modal" data-toggle="modal">...ورود به</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- User_Edit Modal -->
+<div class="modal fade" id="user_edit_pop" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header" style="padding:15px 220px;">
+                <h4 dir="rtl"><span class="glyphicon glyphicon-user"></span>ویرایش اطلاعات</h4>
+            </div>
+            <div class="modal-body" style="padding:10px 50px;">
+                <form action="/user_edit" method="post">
+                    <div dir="rtl" class="form-group">
+                        <input type="text"  name="first_name" placeholder="نام" value="<%=data.first_name%>">
+                        <input type="text" class="pull-left" name="last_name" placeholder="نام خانوادگی" value="<%= data.last_name%>">
+                    </div>
+                    <div dir="rtl" class="form-group">
+                        <input type="text"  name="username" placeholder="نام کاربری" value="<%= data.username %>" readonly>
+                        <input type="password" class="pull-left" name="password" placeholder="کلمه عبور" value="<%= data.password%>">
+                    </div>
+                    <div dir="rtl" class="form-group">
+                        <input  type="text"  name="number" placeholder="شماره تماس" value="<%= data.number%>">
+                        <input dir="ltr" type="text" class="pull-left" name="email" placeholder="ایمیل" value="<%= data.email%>">
+                    </div>
+                    <div style="padding: 0px 0px 10px;">
+                        <input dir="rtl" class="form-control" type="text" name="address" placeholder="آدرس" value="<%= data.address%>">
+                    </div>
+                    <button type="submit" class="btn btn-success btn-block"><span class="glyphicon glyphicon-saved"></span>ذخیره</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger btn-default max-width" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> بستن</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+</div>
+
+<!-- User_ Management Modal-->
+<div class="modal fade" id="user_management_pop" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header" style="padding:15px 230px;">
+                <h4 dir="rtl"><span class="glyphicon glyphicon-user"></span>مدیریت کاربران</h4>
+            </div>
+            <div class="modal-header">
+                <div class="form-group">
+                    <input class="text-center form-control max-width" id="search_user" type="text" placeholder="جستجوی کاربر"/>
+                </div>
+            </div>
+            <div class="modal-body" style="padding:10px 50px;">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th class="col-sm-3">نام</th>
+                        <th class="col-sm-3">نام خانوادگی</th>
+                        <th>نام کاربری</th>
+                    </tr>
+                    </thead>
+                    <tbody id="users_table">
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button id="user_management_close" type="button" class="btn btn-danger btn-default max-width" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> بستن</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+</div>
+
+<!-- User_edit Management Modal-->
+<div class="modal fade" id="user_edit_management_pop" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header" style="padding:15px 230px;">
+                <h4 dir="rtl"><span class="glyphicon glyphicon-user"></span>ویرایش کاربر</h4>
+            </div>
+            <div class="modal-body" style="padding:10px 50px;">
+                <form id="change_users_form" method="post">
+                    <div dir="rtl" class="form-group">
+                        <input id="first_name" class="text-center" type="text"  name="first_name" placeholder="نام">
+                        <input id="last_name" class="text-center pull-left" type="text" name="last_name" placeholder="نام خانوادگی">
+                    </div>
+                    <div dir="rtl" class="form-group">
+                        <input id="username" class="text-center" type="text"  name="username" placeholder="نام کاربری">
+                        <input id="number" class="text-center pull-left" type="text"  name="number" placeholder="شماره تماس">
+                        <!--<input id="" class="text-center pull-left" type="password" class="pull-left" name="password" placeholder="کلمه عبور">-->
+                    </div>
+                    <div dir="rtl" class="form-group">
+                        <!--<input class="text-center" type="text"  name="number" placeholder="شماره تماس">-->
+                        <input id="email" class="form-control text-center" type="text" name="email" placeholder="ایمیل">
+                    </div>
+                    <div style="padding: 0px 0px 10px;">
+                        <input id="address" class="form-control text-center" type="text" name="address" placeholder="آدرس">
+                    </div>
+                    <button id="change_users_save" type="button" class="btn btn-success btn-block" data-dismiss="modal"><span class="glyphicon glyphicon-saved"></span> ذخیره</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger btn-default max-width" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> بستن</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+</div>
+
+<!-- main-goods-management Modal -->
+<div class="modal fade" id="goods_management_pop" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header" style="padding:15px 240px;">
+                <h4 dir="rtl"><span class="glyphicon glyphicon-eye-open"></span>مدیریت انبار</h4>
+            </div>
+            <div dir="rtl" class="modal-body">
+                <ul>
+                    <li><a dir="rtl" data-dismiss="modal" data-toggle="modal" href="#add_goods_pop">اضافه کردن کالا به انبار</a></li>
+                    <li><a dir="rtl" data-dismiss="modal" data-toggle="modal" href="#edit_delete_goods_pop">ویرایش و حذف کالا از انبار</a></li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-danger btn-default max-width" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> بستن</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add goods Modal -->
+<div class="modal fade" id="add_goods_pop" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header" style="padding:15px 230px;">
+                <h4 dir="rtl"><span class="glyphicon glyphicon-user"></span>مشخصات کالا</h4>
+            </div>
+            <div class="modal-body" style="padding:10px 50px;">
+                <form id="frm-addgoods" method="post">
+                    <div dir="rtl" class="form-group">
+                        <input type="text"  name="brand" placeholder="برند">
+                        <select class="pull-left" style="width: 173px;height: 27px;" name="category">
+                            <option>لپ تاپ</option>
+                            <option>تبلت</option>
+                        </select>
+                    </div>
+                    <div dir="rtl" class="form-group">
+                        <input type="text"  name="model" placeholder="مدل">
+                        <input type="text" class="pull-left" name="code" placeholder="کد کالا">
+                    </div>
+                    <div dir="rtl" class="form-group">
+                        <input  type="text"  name="count" placeholder="تعداد کالا">
+                        <input dir="ltr" type="text" class="pull-left" name="price" placeholder="قیمت">
+                    </div>
+                    <div class="form-group">
+                        <input class="max-width text-center" type="text"  name="title" placeholder="عنوان">
+                    </div>
+                    <div class="form-group" dir="ltr">
+                        <input name="image" type="file" id="myfile">
+                    </div>
+                    <button id="goods_submit" type="submit" class="btn btn-success btn-block max-width"><span class="glyphicon glyphicon-saved"></span> ثبت کالا</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger btn-default max-width" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> بستن</button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- Edit & Delete goods Modal -->
+<div class="modal fade" id="edit_delete_goods_pop" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header" style="padding:15px 230px;">
+                <h4 dir="rtl"><span class="glyphicon glyphicon-user"></span>مشخصات کالا</h4>
+            </div>
+            <div class="modal-header">
+                <form class="">
+                    <div class="form-group">
+                        <input id="search_goods" class="text-center form-control max-width" type="text" placeholder="جستجوی محصول"/>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-body" style="padding:10px 50px;">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th class="col-sm-3">مدل محصول</th>
+                        <th class="col-sm-3">دسته بندی</th>
+                        <th>کد</th>
+                    </tr>
+                    </thead>
+                    <tbody id="goods_table">
+                    </tbody>
+                </table>
+            </div>
+            <!--<div class="modal-body" style="padding:10px 50px;">-->
+            <!--<table class="table table-fixed">-->
+            <!--<thead>-->
+            <!--<tr>-->
+            <!--<th style="padding: 10px;">مدل محصول</th>-->
+            <!--<th>دسته بندی</th>-->
+            <!--<th>کد</th>-->
+            <!--</tr>-->
+            <!--</thead>-->
+            <!--<tbody id="goods_table">-->
+            <!--</tbody>-->
+            <!--</table>-->
+            <!--&lt;!&ndash;<form action="" method="post">&ndash;&gt;-->
+            <!--&lt;!&ndash;<div dir="rtl" class="form-group">&ndash;&gt;-->
+            <!--&lt;!&ndash;<input class="text-center" type="text"  name="brand" placeholder="برند">&ndash;&gt;-->
+            <!--&lt;!&ndash;<input class="text-center pull-left" type="text" class="pull-left" name="category" placeholder="تبلت - لپ تاپ">&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;<div dir="rtl" class="form-group">&ndash;&gt;-->
+            <!--&lt;!&ndash;<input class="text-center" type="text"  name="model" placeholder="مدل">&ndash;&gt;-->
+            <!--&lt;!&ndash;<input class="text-center pull-left" type="text" name="code" placeholder="کد کالا">&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;<div dir="rtl" class="form-group">&ndash;&gt;-->
+            <!--&lt;!&ndash;<input class="text-center" type="text" name="count" placeholder="تعداد کالا">&ndash;&gt;-->
+            <!--&lt;!&ndash;<input class="text-center pull-left" dir="ltr" type="text" name="price" placeholder="قیمت">&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;<button type="submit" class="btn btn-success btn-block max-width"><span class="glyphicon glyphicon-saved"></span> ثبت کالا</button>&ndash;&gt;-->
+            <!--&lt;!&ndash;</form>&ndash;&gt;-->
+            <!--</div>-->
+            <div class="modal-footer">
+                <button id="close_goods" type="button" class="btn btn-danger btn-default max-width" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> بستن</button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- Edit goods Modal -->
+<div class="modal fade" id="edit_goods_pop" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header" style="padding:15px 230px;">
+                <h4 dir="rtl"><span class="glyphicon glyphicon-user"></span>مشخصات کالا</h4>
+            </div>
+            <div class="modal-body" style="padding:10px 50px;">
+                <form id="change_goods_form" action="" method="post">
+                    <div dir="rtl" class="form-group">
+                        <input id="brand" class="text-center" type="text"  name="brand" placeholder="برند">
+                        <input id="category" class="text-center pull-left" type="text" class="pull-left" name="category" placeholder="تبلت - لپ تاپ">
+                    </div>
+                    <div dir="rtl" class="form-group">
+                        <input id="model" class="text-center" type="text"  name="model" placeholder="مدل">
+                        <input id="code" class="text-center pull-left" type="text" name="code" placeholder="کد کالا">
+                    </div>
+                    <div dir="rtl" class="form-group">
+                        <input id="count" class="text-center" type="text" name="count" placeholder="تعداد کالا">
+                        <input id="price" class="text-center pull-left" dir="ltr" type="text" name="price" placeholder="قیمت">
+                    </div>
+                    <button id="change_goods_save" type="button" class="btn btn-success btn-block max-width"><span class="glyphicon glyphicon-saved"></span>ذخیره</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="" type="button" class="btn btn-danger btn-default max-width" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> بستن</button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- main report Modal -->
+<div class="modal fade" id="report_management_pop" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header" style="padding:15px 240px;">
+                <h4><span class="glyphicon glyphicon-eye-open"></span>گزارشات</h4>
+            </div>
+            <div class="modal-body">
+                <ul>
+                    <li><a data-dismiss="modal" data-toggle="modal" href="#instock_report_pop">گزارش موجودی انبار</a></li>
+                    <li><a data-dismiss="modal" data-toggle="modal" href="#">گزارش فروش</a></li>
+                    <li><a data-dismiss="modal" data-toggle="modal" href="#">گزارش سوابق خرید</a></li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-danger btn-default max-width" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> بستن</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- in stock report -->
+<div class="modal fade" id="instock_report_pop" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header" style="padding:15px 230px;">
+                <h4 dir="rtl"><span class="glyphicon glyphicon-user"></span>موجودی انبار</h4>
+            </div>
+            <div class="modal-body" style="padding:10px 50px;">
+                <div dir="rtl" class="form-group">
+                    <label>تعداد برندهای موجود:</label>
+                    <span id="spn-brand">50</span>
+                    <label>تعداد کد کالاهای موجود:</label>
+                    <span id="spn-code">150</span>
+                </div>
+                <div dir="rtl" class="form-group">
+                    <label>تعداد کل کالاهای موجود:</label>
+                    <span id="spn-brand">50</span>
+                    <label>ارزش  کالاهای موجود:</label>
+                    <span id="spn-code">150</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger btn-default max-width" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> بستن</button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- shoping-cart Modal-->
+<div class="modal fade" id="shoping_cart_pop" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header" style="padding:15px 230px;">
+                <h4 dir="rtl"><span class="glyphicon glyphicon-shopping-cart"></span>سبد خرید</h4>
+            </div>
+            <div class="modal-body" style="padding:10px 50px;">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th class="col-sm-1">محصول</th>
+                        <th class="col-sm-1">قیمت</th>
+                        <th class="col-sm-2">تعداد</th>
+                    </tr>
+                    </thead>
+                    <tbody id="cart_table">
+                    </tbody>
+                </table>
+                <div style="background-color: lightcoral;margin-bottom: 5px;">
+                    <span>قیمت کل:</span>
+                    <span id="totalcost_spn" class="pull-left"></span>
+                </div>
+                <button class="btn btn-primary" id="payment_btn" data-dismiss="modal" style="margin: 0px 190px;padding: 5px 40px 5px 40px;">پرداخت</button>
+            </div>
+            <div class="modal-footer">
+                <button id="" type="button" class="btn btn-danger btn-default max-width" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> بستن</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+</div>
+
+
+<!--////////////////////////////////////////-->
+<div class="main">
+    <div class="ism-slider" id="my-slider">
+        <ol>
+            <li>
+                <a href="#"><img src="images/1.jpg"></a>
+                <!--  <div class="ism-caption ism-caption-0">My slide caption text</div>  -->
+            </li>
+            <li>
+                <a href="#"><img src="images/2.png"></a>
+                <!--   <div class="ism-caption ism-caption-0">My slide caption text</div>    -->
+            </li>
+            <li>
+                <a href="#"><img src="images/3.png"></a>
+                <!-- <div class="ism-caption ism-caption-0">My slide caption text</div>    -->
+            </li>
+        </ol>
+    </div>
+    <p class="ism-badge" id="my-slider-ism-badge"><a class="ism-link" href="http://imageslidermaker.com" rel="nofollow">generated with ISM</a></p>
+    <h2 class="text-center" id="pro"><ins>محصولات جدید </ins></h2>
+    <div class="container" id="img-contain1">
+        <%for(index in data.goods_data){%>
+        <div class="col-sm-4">
+            <div class="panel panel-primary">
+                <div class="panel-heading text-center"><%=data.goods_data[index].title%></div>
+                <input class="hidden" id="inp_good_id" value="<%=data.goods_data[index]._id%>"/>
+                <input class="hidden" id="inp_user_id" value="<%= data._id %>"/>
+                <div class="panel-body"><img src=<%=data.goods_data[index].image_address %> class="img-responsive center-block" alt="Image"></div>
+                <div class="panel-footer text-right">
+                    <!--<button class="btn btn-primary">خرید</button>-->
+                    <button class="btn btn-primary glyphicon glyphicon-shopping-cart basket" id="btn-basket" value="<%=data.goods_data[index]._id%>">اضافه کردن به</button>
+                </div>
+            </div>
+        </div>
+        <%}%>
+    </div><br />
+</div>
+</div>
+</div>
+<div style="background-color: #141414">
+    <div class="wrapper">
+        <div class="section group  text-right">
+            <div class="col_1_of_4 span_1_of_4">
+                <h4>اطلاعات</h4>
+                <ul>
+                    <li><a href="#">درباره ما</a></li>
+                    <li><a href="#"><span>جستجو</span></a></li>
+                    <li><a href="#"><span>تماس با ما</span></a></li>
+                </ul>
+            </div>
+            <div class="col_1_of_4 span_1_of_4">
+                <h4>چرا خرید از ما</h4>
+                <ul>
+                    <li><a href="">درباره ما</a></li>
+                    <li><a href="#">سیاست حفظ حریم خصوصی</a></li>
+                    <li><a href=""><span>نقشه سایت</span></a></li>
+                </ul>
+            </div>
+            <div class="col_1_of_4 span_1_of_4">
+                <h4>حساب من</h4>
+                <ul>
+                    <li><a href="">ورود به حساب کاربری</a></li>
+                    <li><a href="">مشاهده سبد خرید</a></li>
+                </ul>
+            </div>
+            <div class="col_1_of_4 span_1_of_4">
+                <h4>تماس با ما</h4>
+                <ul>
+                    <li><span>0915-8020410</span></li>
+                    <li><span id="sp-email">esi.hadizadeh@outlook.com</span></li>
+                </ul>
+                <div class="social-icons">
+                    <h4>دنبال کنید ما را در</h4>
+                    <ul>
+                        <li class="facebook"><a href="#" target="_blank"> </a></li>
+                        <li class="twitter"><a href="#" target="_blank"> </a></li>
+                        <li class="googleplus"><a href="#" target="_blank"> </a></li>
+                        <li class="contact"><a href="#" target="_blank"> </a></li>
+                        <div class="clear"></div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="copy_left">
+            <p>Java Script پروژه دانشجویی فروشگاه مجازی با زبان</p>
+        </div>
+    </div>
+</div>
+<script src="javascripts/F-js.js"></script>
+<script src="javascripts/toastr.min.js"></script>
+<script src="javascripts/ajax.js"></script>
+
+</body>
+</html>
