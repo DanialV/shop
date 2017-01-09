@@ -7,17 +7,15 @@ var multer  = require('multer')
 var upload = multer({ dest: './public/goods_data/' })
 module.exports = function(app) {
     app.route('/*').get(function(req, res, next) {
-        //console.log("dadad");
         next();
-
     });
     app.route('/').get(function(req, res) {
-        db.goods.find({}).sort({$natural: -1}).limit(10).lean().exec(function(err,info){
+        db.goods.find({}).sort({$natural: -1}).limit(9).lean().exec(function(err,info){
           if(err){
 
           }
           else{
-            // console.log(info)
+              // console.log(info);
             if (typeof req.session.role == 'undefined') {
               res.render('index', {
                   data: {
@@ -27,7 +25,6 @@ module.exports = function(app) {
               });
             }
             else{
-              // console.log(req.session)
               let _data = req.session;
               _data['goods_data'] = info;
               res.render('index', {
@@ -36,7 +33,6 @@ module.exports = function(app) {
             }
           }
         });
-
     });
 
     app.route('/login').post(function(req, res) {
@@ -110,7 +106,7 @@ module.exports = function(app) {
     var type = upload.single('image');
     app.post('/add_goods',type,function(req, res) {
         var data = req.body;
-        console.log(req.file);
+        // console.log(req.file);
         data.image_address = 'goods_data/' + req.file.filename;
         db.goods.findOne({
             code: data.code
@@ -299,15 +295,6 @@ module.exports = function(app) {
     });
 
     app.route('/apple').get(function (req,res) {
-        var _data = req.session;
-        if (typeof req.session.role == 'undefined') {
-            res.render('apple_goods', {
-                data: {
-                    role: 0
-                }
-            });
-        }
-        else{
             db.goods.find({brand:'apple'}).lean().exec(function(err,info){
                if(err){
 
@@ -331,37 +318,55 @@ module.exports = function(app) {
                    }
                }
             });
-        }
     });
     app.route('/samsung').get(function (req,res) {
-        var _data = req.session;
-        if (typeof req.session.role == 'undefined') {
-            res.render('samsung_goods', {
-                data: {
-                    role: 0
+        db.goods.find({brand:'samsung'}).lean().exec(function(err,info){
+            if(err){
+
+            }
+            else{
+                if (typeof req.session.role == 'undefined') {
+                    res.render('samsung_goods', {
+                        data: {
+                            role: 0,
+                            goods_data:info
+                        }
+                    });
                 }
-            });
-        }
-        else{
-            res.render('samsung_goods', {
-                data: _data
-            });
-        }
+                else{
+                    // console.log(req.session)
+                    let _data = req.session;
+                    _data['goods_data'] = info;
+                    res.render('samsung_goods', {
+                        data: _data
+                    });
+                }
+            }
+        });
     });
     app.route('/lg').get(function (req,res) {
-        var _data = req.session;
-        if (typeof req.session.role == 'undefined') {
-            res.render('lg_goods', {
-                data: {
-                    role: 0
+        db.goods.find({brand:'lg'}).lean().exec(function(err,info){
+            if(err){
+
+            }
+            else{
+                if (typeof req.session.role == 'undefined') {
+                    res.render('lg_goods', {
+                        data: {
+                            role: 0,
+                            goods_data:info
+                        }
+                    });
                 }
-            });
-        }
-        else{
-            res.render('lg_goods', {
-                data: _data
-            });
-        }
+                else{
+                    let _data = req.session;
+                    _data['goods_data'] = info;
+                    res.render('lg_goods', {
+                        data: _data
+                    });
+                }
+            }
+        });
     });
 
     app.route('/add_cart').post(function (req,res) {
@@ -416,7 +421,6 @@ module.exports = function(app) {
                                cart_object.good_id = g_result._id;
                                cart_object.qty = 1;
                                arr.push(cart_object);
-                               // console.log(cart_object);
                                temp++;
                                if(temp === result.shop_list.length){
                                    req.session.count = result.shop_list.length;
@@ -455,28 +459,33 @@ module.exports = function(app) {
 
     app.route('/payment').post(function (req,res) {
         var g_i_index = 2;
-        var g_q_index = 3;
+        var count = 0;var cnt = 0;
         var data = req.body;
-        for(var i=0 ; i < data.len ; i++) {
-            db.goods.findOne({_id: data[Object.keys(data)[g_i_index]]}, {},function (err,result) {
-                if (err) {
+        Object.keys(data).forEach(function (value, index) {
+          if(cnt == g_i_index){
+              db.goods.findOne({_id: data[value]}, {},function (err,result) {
+                      if (err) {
 
-                }
-                else {
-                    result.count -= data[Object.keys(data)[g_q_index]];
-                    result.save(function (err) {
-                        if(err){
+                      }
+                      else {
+                          // console.log(data[value]);
+                          // console.log(data[Object.keys(data)[index+1]]);
+                          count = parseInt(result.count) - parseInt(data[Object.keys(data)[index+1]]);
+                          result.count = count;
+                          result.save(function (err) {
+                              if(err){
 
-                        }
-                        else{
+                              }
+                              else{
 
-                        }
-                    });
-                }
-            });
-            g_i_index += 4;
-            g_q_index += 4;
-        }
+                              }
+                          });
+                      }
+              });
+              g_i_index += 4;
+          }
+          cnt++;
+        });
         db.users.findOne({_id: data.user_id},{},function (err,result) {
             if(err){
 

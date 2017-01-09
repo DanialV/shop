@@ -52,7 +52,7 @@
                         </div>
                         <div class="container-fluid collapse navbar-collapse" id="myNavbar">
                             <ul class="nav navbar-nav navbar-right" id="home">
-                                <li class="active"><a href="#">صفحه اصلی</a></li>
+                                <li class="active"><a href="/">صفحه اصلی</a></li>
                             </ul>
 
                             <%if(data.role == 2){%>
@@ -356,7 +356,7 @@
                             <div class="form-group">
                                 <input class="max-width text-center" type="text"  name="title" placeholder="عنوان">
                             </div>
-                               <div class="form-group" dir="ltr">
+                            <div class="form-group" dir="ltr">
                                 <input name="image" type="file" id="myfile">
                             </div>
                             <button id="goods_submit" type="submit" class="btn btn-success btn-block max-width"><span class="glyphicon glyphicon-saved"></span> ثبت کالا</button>
@@ -399,34 +399,6 @@
                             </tbody>
                         </table>
                     </div>
-                    <!--<div class="modal-body" style="padding:10px 50px;">-->
-                        <!--<table class="table table-fixed">-->
-                            <!--<thead>-->
-                            <!--<tr>-->
-                                <!--<th style="padding: 10px;">مدل محصول</th>-->
-                                <!--<th>دسته بندی</th>-->
-                                <!--<th>کد</th>-->
-                            <!--</tr>-->
-                            <!--</thead>-->
-                            <!--<tbody id="goods_table">-->
-                            <!--</tbody>-->
-                            <!--</table>-->
-                        <!--&lt;!&ndash;<form action="" method="post">&ndash;&gt;-->
-                            <!--&lt;!&ndash;<div dir="rtl" class="form-group">&ndash;&gt;-->
-                                <!--&lt;!&ndash;<input class="text-center" type="text"  name="brand" placeholder="برند">&ndash;&gt;-->
-                                <!--&lt;!&ndash;<input class="text-center pull-left" type="text" class="pull-left" name="category" placeholder="تبلت - لپ تاپ">&ndash;&gt;-->
-                            <!--&lt;!&ndash;</div>&ndash;&gt;-->
-                            <!--&lt;!&ndash;<div dir="rtl" class="form-group">&ndash;&gt;-->
-                                <!--&lt;!&ndash;<input class="text-center" type="text"  name="model" placeholder="مدل">&ndash;&gt;-->
-                                <!--&lt;!&ndash;<input class="text-center pull-left" type="text" name="code" placeholder="کد کالا">&ndash;&gt;-->
-                            <!--&lt;!&ndash;</div>&ndash;&gt;-->
-                            <!--&lt;!&ndash;<div dir="rtl" class="form-group">&ndash;&gt;-->
-                                <!--&lt;!&ndash;<input class="text-center" type="text" name="count" placeholder="تعداد کالا">&ndash;&gt;-->
-                                <!--&lt;!&ndash;<input class="text-center pull-left" dir="ltr" type="text" name="price" placeholder="قیمت">&ndash;&gt;-->
-                            <!--&lt;!&ndash;</div>&ndash;&gt;-->
-                            <!--&lt;!&ndash;<button type="submit" class="btn btn-success btn-block max-width"><span class="glyphicon glyphicon-saved"></span> ثبت کالا</button>&ndash;&gt;-->
-                        <!--&lt;!&ndash;</form>&ndash;&gt;-->
-                    <!--</div>-->
                     <div class="modal-footer">
                         <button id="close_goods" type="button" class="btn btn-danger btn-default max-width" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> بستن</button>
                     </div>
@@ -565,7 +537,7 @@
                     <div class="ism-slider" id="my-slider">
                         <ol>
                             <li>
-                                <a href="#"><img src="images/1.jpg"></a>
+                                <a href="#"><img src="images/1.png"></a>
                                 <!--  <div class="ism-caption ism-caption-0">My slide caption text</div>  -->
                             </li>
                             <li>
@@ -579,7 +551,7 @@
                         </ol>
                     </div>
                     <p class="ism-badge" id="my-slider-ism-badge"><a class="ism-link" href="http://imageslidermaker.com" rel="nofollow">generated with ISM</a></p>
-                    <h2 class="text-center" id="pro"><ins>محصولات جدید </ins></h2>
+                    <h2 class="text-center" id="pro">محصولات جدید</h2>
                     <div class="container" id="img-contain1">
                         <%for(index in data.goods_data){%>
                           <div class="col-sm-4">
@@ -587,10 +559,15 @@
                                   <div class="panel-heading text-center"><%=data.goods_data[index].title%></div>
                                   <input class="hidden" id="inp_good_id" value="<%=data.goods_data[index]._id%>"/>
                                   <input class="hidden" id="inp_user_id" value="<%= data._id %>"/>
-                                  <div class="panel-body"><img src=<%=data.goods_data[index].image_address %> class="img-responsive center-block" alt="Image"></div>
+                                  <div class="panel-body"><img class="panel-size" src="<%=data.goods_data[index].image_address %>" class="img-responsive center-block" alt="Image"></div>
                                   <div class="panel-footer text-right">
-                                    <!--<button class="btn btn-primary">خرید</button>-->
+                                    <%if(data.goods_data[index].count != 0){%>
                                     <button class="btn btn-primary glyphicon glyphicon-shopping-cart basket" id="btn-basket" value="<%=data.goods_data[index]._id%>">اضافه کردن به</button>
+                                    <span class="pull-left price_spn" id="price_spn"><%=data.goods_data[index].price%> تومان</span>
+                                    <%}else{%>
+                                    <button disabled class="btn btn-primary glyphicon glyphicon-shopping-cart basket" id="btn-basket" value="<%=data.goods_data[index]._id%>">اضافه کردن به</button>
+                                    <span class="pull-left price_spn" id="price_spn">نا موجود!</span>
+                                    <%}%>
                                   </div>
                               </div>
                           </div>

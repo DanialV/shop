@@ -42,6 +42,7 @@ $(document).ready(function(){
 
     $("#goods_submit").click(function(){
         var formData = new FormData($("#frm-addgoods")[0]);
+        // console.log(formData);
         $.ajax({
             url:'/add_goods',
             method:'POST',
@@ -276,7 +277,7 @@ $(document).ready(function(){
         }).success(function (product) {
             $("#cart_count").text(product.length);
             user_shoplist = product.slice();
-            console.log(user_shoplist);
+            // console.log(user_shoplist);
             var trHTML = '';
             $.each(product, function (i, item) {
                 trHTML += '<tr><td class="col-sm-3">' + item.information + '</td><td class="col-sm-3">' + item.price + '</td><td><input class="text-center" id="quantity_inp" size="2" value=' + item.qty + ' /></td><td><button class="btn btn-danger btn-sm" type="button"><span class="glyphicon glyphicon-remove"></span></button></td><td class="hidden">'+i+'</td></tr>';
@@ -354,8 +355,7 @@ $(document).ready(function(){
                 return o;
             }, {});
             _data.user_id = $("#cart_user_id").val();
-            _data.len = user_shoplist.length;
-            console.log(_data);
+            // console.log(user_shoplist);
             if(_data.len != 0){
                 $.ajax({
                     url: '/payment',
@@ -373,7 +373,6 @@ $(document).ready(function(){
                 })
             }
         });
-
     });
 
 });

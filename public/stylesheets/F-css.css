@@ -1,6 +1,14 @@
 .max-width {
     width: 100%;
-};
+}
+.panel-size {
+    width: 320px;
+    height: 250px;
+}
+.price_spn {
+    color: green;
+}
+/*////////////////////////*/
 .bg-1 {
     background-color: lightgray;
 }

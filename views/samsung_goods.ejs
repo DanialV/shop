@@ -52,7 +52,7 @@
                 </div>
                 <div class="container-fluid collapse navbar-collapse" id="myNavbar">
                     <ul class="nav navbar-nav navbar-right" id="home">
-                        <li class="active"><a href="#">صفحه اصلی</a></li>
+                        <li class="active"><a href="/">صفحه اصلی</a></li>
                     </ul>
 
                     <%if(data.role == 2){%>
@@ -72,9 +72,9 @@
                         <li class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">محصولات<span class="caret"></span></a>
                             <ul class="dropdown-menu navbar-inverse">
-                                <li><a class="text-right" href="#">اپل</a></li>
+                                <li><a class="text-right" href="/apple">اپل</a></li>
                                 <li><a class="text-right" href="#">سامسونگ</a></li>
-                                <li><a class="text-right" href="#">الجی</a></li>
+                                <li><a class="text-right" href="/lg">الجی</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -493,8 +493,29 @@
 
 <!--////////////////////////////////////////-->
 
-<div><h1>sami ride!</h1></div>
-
+<div class="main">
+    <div class="container" id="img-contain1">
+        <%for(index in data.goods_data){%>
+        <div class="col-sm-4">
+            <div class="panel panel-primary">
+                <div class="panel-heading text-center"><%=data.goods_data[index].title%></div>
+                <input class="hidden" id="inp_good_id" value="<%=data.goods_data[index]._id%>"/>
+                <input class="hidden" id="inp_user_id" value="<%= data._id %>"/>
+                <div class="panel-body"><img class="panel-size" src="<%=data.goods_data[index].image_address %>" class="img-responsive center-block" alt="Image"></div>
+                <div class="panel-footer text-right">
+                    <%if(data.goods_data[index].count != 0){%>
+                    <button class="btn btn-primary glyphicon glyphicon-shopping-cart basket" id="btn-basket" value="<%=data.goods_data[index]._id%>">اضافه کردن به</button>
+                    <span class="pull-left price_spn" id="price_spn"><%=data.goods_data[index].price%> تومان</span>
+                    <%}else{%>
+                    <button disabled class="btn btn-primary glyphicon glyphicon-shopping-cart basket" id="btn-basket" value="<%=data.goods_data[index]._id%>">اضافه کردن به</button>
+                    <span class="pull-left price_spn" id="price_spn">نا موجود!</span>
+                    <%}%>
+                </div>
+            </div>
+        </div>
+        <%}%>
+    </div><br />
+</div>
 <div style="background-color: #141414">
     <div class="wrapper">
         <div class="section group  text-right">
