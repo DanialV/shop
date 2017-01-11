@@ -8,13 +8,23 @@
 .price_spn {
     color: green;
 }
+.carousel-inner > .item > img,
+.carousel-inner > .item > a > img {
+	width: 70%;
+    height: 70%;
+	margin: auto;
+}
+.inp-width {
+    width: 240px;
+}
 /*////////////////////////*/
-.bg-1 {
-    background-color: lightgray;
-}
-.bg-2 {
-    background-color: white;
-}
+/*.bg-1 {*/
+    /*background-color: lightgray;*/
+/*}*/
+/*.bg-2 {*/
+    /*background-color: white;*/
+/*}*/
+
 div.search-box{
     margin-top:70px;
 }  

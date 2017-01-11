@@ -74,7 +74,7 @@
                             <ul class="dropdown-menu navbar-inverse">
                                 <li><a class="text-right" href="/apple">اپل</a></li>
                                 <li><a class="text-right" href="/samsung">سامسونگ</a></li>
-                                <li><a class="text-right" href="#">الجی</a></li>
+                                <li><a class="text-right" href="/lg">الجی</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -104,7 +104,12 @@
                     <%}%>
                     <%if(data.role == 1){%>
                     <ul class="nav navbar-nav pull-left">
-                        <li><a href="#"><span class="glyphicon glyphicon-shopping-cart"></span>سبد خرید</a></li>
+                        <li><a href="#shoping_cart_pop" data-toggle="modal" data-dismiss="modal" id="cart-btn"><i class="glyphicon glyphicon-shopping-cart"></i>
+                                سبد خرید
+                                <input class="hidden" id="cart_user_id" value="<%=data._id%>">
+                                <span id="cart_count"><%=data.count%></span>
+                            </a>
+                        </li>
                     </ul>
                     <%}%>
                 </div>
@@ -352,7 +357,7 @@
                         <input class="max-width text-center" type="text"  name="title" placeholder="عنوان">
                     </div>
                     <div class="form-group" dir="ltr">
-                        <input type="file" id="myfile" value="">
+                        <input name="image" type="file" id="myfile">
                     </div>
                     <button id="goods_submit" type="submit" class="btn btn-success btn-block max-width"><span class="glyphicon glyphicon-saved"></span> ثبت کالا</button>
                 </form>
@@ -394,6 +399,34 @@
                     </tbody>
                 </table>
             </div>
+            <!--<div class="modal-body" style="padding:10px 50px;">-->
+            <!--<table class="table table-fixed">-->
+            <!--<thead>-->
+            <!--<tr>-->
+            <!--<th style="padding: 10px;">مدل محصول</th>-->
+            <!--<th>دسته بندی</th>-->
+            <!--<th>کد</th>-->
+            <!--</tr>-->
+            <!--</thead>-->
+            <!--<tbody id="goods_table">-->
+            <!--</tbody>-->
+            <!--</table>-->
+            <!--&lt;!&ndash;<form action="" method="post">&ndash;&gt;-->
+            <!--&lt;!&ndash;<div dir="rtl" class="form-group">&ndash;&gt;-->
+            <!--&lt;!&ndash;<input class="text-center" type="text"  name="brand" placeholder="برند">&ndash;&gt;-->
+            <!--&lt;!&ndash;<input class="text-center pull-left" type="text" class="pull-left" name="category" placeholder="تبلت - لپ تاپ">&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;<div dir="rtl" class="form-group">&ndash;&gt;-->
+            <!--&lt;!&ndash;<input class="text-center" type="text"  name="model" placeholder="مدل">&ndash;&gt;-->
+            <!--&lt;!&ndash;<input class="text-center pull-left" type="text" name="code" placeholder="کد کالا">&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;<div dir="rtl" class="form-group">&ndash;&gt;-->
+            <!--&lt;!&ndash;<input class="text-center" type="text" name="count" placeholder="تعداد کالا">&ndash;&gt;-->
+            <!--&lt;!&ndash;<input class="text-center pull-left" dir="ltr" type="text" name="price" placeholder="قیمت">&ndash;&gt;-->
+            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+            <!--&lt;!&ndash;<button type="submit" class="btn btn-success btn-block max-width"><span class="glyphicon glyphicon-saved"></span> ثبت کالا</button>&ndash;&gt;-->
+            <!--&lt;!&ndash;</form>&ndash;&gt;-->
+            <!--</div>-->
             <div class="modal-footer">
                 <button id="close_goods" type="button" class="btn btn-danger btn-default max-width" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> بستن</button>
             </div>
@@ -490,6 +523,61 @@
 </div>
 </div>
 
+<!-- shoping-cart Modal-->
+<div class="modal fade" id="shoping_cart_pop" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header" style="padding:15px 230px;">
+                <h4 dir="rtl"><span class="glyphicon glyphicon-shopping-cart"></span>سبد خرید</h4>
+            </div>
+            <div class="modal-body" style="padding:10px 50px;">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th class="col-sm-1">محصول</th>
+                        <th class="col-sm-1">قیمت</th>
+                        <th class="col-sm-2">تعداد</th>
+                    </tr>
+                    </thead>
+                    <tbody id="cart_table">
+                    </tbody>
+                </table>
+                <div style="background-color: lightcoral;margin-bottom: 5px;">
+                    <span>قیمت کل:</span>
+                    <span id="totalcost_spn" class="pull-left"></span>
+                </div>
+                <button class="btn btn-primary" id="payment_btn" data-dismiss="modal" style="margin: 0px 190px;padding: 5px 40px 5px 40px;">پرداخت</button>
+            </div>
+            <div class="modal-footer">
+                <button id="" type="button" class="btn btn-danger btn-default max-width" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> بستن</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Show goods detail -->
+<div class="modal fade" id="show_goods_pop" role="dialog">
+    <div class="modal-dialog modal-lg">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header" style="padding:15px 230px;">
+                <h4 class="text-center" id="good_detail_header"><span class=""></span></h4>
+            </div>
+            <div class="modal-body" id="goods_detail_modal_body" style="padding:10px 50px;">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger btn-default max-width" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> بستن</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+
 
 <!--////////////////////////////////////////-->
 <div class="main">
@@ -500,7 +588,7 @@
                 <div class="panel-heading text-center"><%=data.goods_data[index].title%></div>
                 <input class="hidden" id="inp_good_id" value="<%=data.goods_data[index]._id%>"/>
                 <input class="hidden" id="inp_user_id" value="<%= data._id %>"/>
-                <div class="panel-body"><img class="panel-size" src="<%=data.goods_data[index].image_address %>" class="img-responsive center-block" alt="Image"></div>
+                <div class="panel-body"><a href="#show_goods_pop" data-toggle="modal"><img class="img-responsive center-block panel-size goods-detail" src="<%=data.goods_data[index].image_address %>" alt="Img" value="<%=data.goods_data[index]._id%>"></a></div>
                 <div class="panel-footer text-right">
                     <%if(data.goods_data[index].count != 0){%>
                     <button class="btn btn-primary glyphicon glyphicon-shopping-cart basket" id="btn-basket" value="<%=data.goods_data[index]._id%>">اضافه کردن به</button>
@@ -514,6 +602,8 @@
         </div>
         <%}%>
     </div><br />
+</div>
+</div>
 </div>
 <div style="background-color: #141414">
     <div class="wrapper">

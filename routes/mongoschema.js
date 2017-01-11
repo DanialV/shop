@@ -32,7 +32,15 @@ var goods = Schema({
     code : String,
     count:String,
     price:Number,
-    image_address:String
+    image_address:String,
+    cpu: String,
+    ram: String,
+    hdd: String,
+    graphic: String,
+    display: String,
+    os: String,
+    weight: String,
+    features: String
 });
 var report_schema = Schema({
     user_id : String,

@@ -106,7 +106,6 @@ module.exports = function(app) {
     var type = upload.single('image');
     app.post('/add_goods',type,function(req, res) {
         var data = req.body;
-        // console.log(req.file);
         data.image_address = 'goods_data/' + req.file.filename;
         db.goods.findOne({
             code: data.code
@@ -175,20 +174,30 @@ module.exports = function(app) {
     });
     app.route('/change_goods').post(function(req, res) {
         var data = req.body;
-        //       console.log(data);
         var _code = data.code;
+        console.log(_code);
         db.goods.findOne({
             code: _code
         }, {}, function(err, result) {
             if (err) {
 
             } else {
+                // console.log(data);
                 result.brand = data.brand;
                 result.category = data.category;
                 result.model = data.model;
-                result.code = data.code;
+                // result.code = data.code;
                 result.count = data.count;
                 result.price = data.price;
+                result.cpu = data.cpu;
+                result.ram = data.ram;
+                result.hdd = data.hdd;
+                result.graphic = data.graphic;
+                result.display = data.display;
+                result.os = data.os;
+                result.weight = data.weight;
+                result.title = data.title;
+                result.features = data.features;
                 result.save(function(err) {
                     if (err) {
 
@@ -502,6 +511,18 @@ module.exports = function(app) {
                         res.send('ok');
                     }
                 });
+            }
+        });
+    });
+
+    app.route('/show_goods_detail').post(function (req,res) {
+        var data = req.body;
+        db.goods.findOne({_id: data.goods_id}, {},function (err,result) {
+            if(err){
+
+            }
+            else{
+                res.send(result);
             }
         });
     });

@@ -557,6 +557,25 @@
 
     </div>
 </div>
+
+<!-- Show goods detail -->
+<div class="modal fade" id="show_goods_pop" role="dialog">
+    <div class="modal-dialog modal-lg">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header" style="padding:15px 230px;">
+                <h4 class="text-center" id="good_detail_header"><span class=""></span></h4>
+            </div>
+            <div class="modal-body" id="goods_detail_modal_body" style="padding:10px 50px;">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger btn-default max-width" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> بستن</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 </div>
 
 
@@ -569,7 +588,7 @@
                 <div class="panel-heading text-center"><%=data.goods_data[index].title%></div>
                 <input class="hidden" id="inp_good_id" value="<%=data.goods_data[index]._id%>"/>
                 <input class="hidden" id="inp_user_id" value="<%= data._id %>"/>
-                <div class="panel-body"><img class="panel-size" src="<%=data.goods_data[index].image_address %>" class="img-responsive center-block" alt="Image"></div>
+                <div class="panel-body"><a href="#show_goods_pop" data-toggle="modal"><img class="img-responsive center-block panel-size goods-detail" src="<%=data.goods_data[index].image_address %>" alt="Img" value="<%=data.goods_data[index]._id%>"></a></div>
                 <div class="panel-footer text-right">
                     <%if(data.goods_data[index].count != 0){%>
                     <button class="btn btn-primary glyphicon glyphicon-shopping-cart basket" id="btn-basket" value="<%=data.goods_data[index]._id%>">اضافه کردن به</button>
