@@ -1,4 +1,4 @@
-﻿var inp = document.getElementById("search-input");
+﻿var inp = document.getElementById("search_input");
 inp.onfocus = function () {
     if (inp.value == "جستجوی محصولات"){
         inp.value = "";

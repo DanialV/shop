@@ -28,13 +28,17 @@
     <div class="container bg-2">
         <div class="header">
             <div class="search-box text-center">
-                <form class="form-inline">
-                    <div class="form-group">
-                        <input class="text-center form-control" id="search-input" type="text" value="جستجوی محصولات" />
-                    </div>
-                    <button class="btn btn-primary" type="submit">
-                        <span class="glyphicon glyphicon-search"></span>جستجو
-                    </button>
+                <form class="form-inline" id="search_frm" action="/search" method="post">
+                    <fieldset>
+                        <button class="btn btn-primary" id="search_btn" type="submit">
+                            <a href="">
+                            </a>
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                        <div class="form-group">
+                            <input class="text-center form-control" id="search_input" name="search_input" type="text" value="جستجوی محصولات" />
+                        </div>
+                    </fieldset>
                 </form>
             </div>
             <%if(data.role != 0){%>
@@ -602,6 +606,9 @@
         </div>
         <%}%>
     </div><br />
+    <div class="text-center" dir="ltr" style="padding-bottom: 10px;">
+        <button class="glyphicon glyphicon-menu-left" id="prev_btn"></button> Previous - Next <button class="glyphicon glyphicon-menu-right" id="next_btn"></button>
+    </div>
 </div>
 </div>
 </div>

@@ -1,3 +1,16 @@
+/*.tb-body {*/
+    /*height: 500px;*/
+/*}*/
+#search-input {
+    background-color: white;
+    background-image: url('searchicon.png');
+    background-position: 770px 6px;
+    background-repeat: no-repeat;
+    padding: 12px 20px 12px 40px;
+    width: 800px;
+    -webkit-transition: width 0.4s ease-in-out;
+    transition: width 0.4s ease-in-out;
+}
 .max-width {
     width: 100%;
 }
@@ -47,10 +60,6 @@ div.search-box{
 #pro{
     color:purple;
 }
-heading{
-
-}
-
 .col1 ul li{
       list-style-type:none;
       float:right;

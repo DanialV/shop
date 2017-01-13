@@ -107,29 +107,33 @@ module.exports = function(app) {
     app.post('/add_goods',type,function(req, res) {
         var data = req.body;
         data.image_address = 'goods_data/' + req.file.filename;
-        db.goods.findOne({
-            code: data.code
-        }, {}).lean().exec(function(err, resualt) {
-            if (err) {
+        console.log(data);
+        if(data.code.trim() != '' && data.model.trim() != ''){
+            db.goods.findOne({
+                code: data.code
+            }, {}).lean().exec(function(err, resualt) {
+                if (err) {
 
-            } else {
-                if (resualt == null) {
-                    var temp = new db.goods(data);
-                    temp.save(function(err) {
-                        if (err) {
-                            res.sendStatus(500);
-                        } else {
-                            res.send('ok');
-                        }
-                    })
                 } else {
-                    res.send('error');
+                    if (resualt == null) {
+                        var temp = new db.goods(data);
+                        temp.save(function(err) {
+                            if (err) {
+                                res.sendStatus(500);
+                            } else {
+                                res.send('ok');
+                            }
+                        })
+                    } else {
+                        res.send('error');
+                    }
                 }
-            }
-        })
+            })
+        }else{
+            res.send('blank');
+        }
     });
     app.route('/search_goods').post(function(req, res) {
-
         if (req.body.search == '') {
             res.send([]);
         } else {
@@ -157,8 +161,6 @@ module.exports = function(app) {
 
             })
         }
-
-
     });
     app.route('/delete_goods').post(function(req, res) {
         var data = req.body;
@@ -318,7 +320,6 @@ module.exports = function(app) {
                        });
                    }
                    else{
-                       // console.log(req.session)
                        let _data = req.session;
                        _data['goods_data'] = info;
                        res.render('apple_goods', {
@@ -343,7 +344,6 @@ module.exports = function(app) {
                     });
                 }
                 else{
-                    // console.log(req.session)
                     let _data = req.session;
                     _data['goods_data'] = info;
                     res.render('samsung_goods', {
@@ -525,5 +525,49 @@ module.exports = function(app) {
                 res.send(result);
             }
         });
+    });
+
+    app.route('/search').post(function (req,res) {
+        // console.log(req.body.search_input);
+        if (req.body.search_input.trim() == '') {
+
+        } else {
+            var data = new RegExp(req.body.search_input, 'i');
+            db.goods.find({
+                $or: [{
+                    'brand': data
+                }, {
+                    'category': data
+                }, {
+                    'model': data
+                }, {
+                    'cpu': data
+                }, {
+                    'ram': data
+                }]
+            }, {}).lean().
+            exec(function(err, result) {
+                if (err) {
+                    res.sendStatus(500);
+                } else {
+                    result.search_input = req.body.search_input;
+                    if (typeof req.session.role == 'undefined') {
+                        res.render('search', {
+                            data: {
+                                role: 0,
+                                goods_data:result
+                            }
+                        });
+                    }
+                    else{
+                        let _data = req.session;
+                        _data['goods_data'] = result;
+                        res.render('search', {
+                            data: _data
+                        });
+                    }
+                }
+            })
+        }
     });
 };

@@ -42,7 +42,7 @@ $(document).ready(function(){
 
     $("#goods_submit").click(function(){
         var formData = new FormData($("#frm-addgoods")[0]);
-        console.log(formData);
+       // console.log($("#frm-addgoods").code);
         $.ajax({
             url:'/add_goods',
             method:'POST',
@@ -53,13 +53,14 @@ $(document).ready(function(){
             $("#frm-addgoods").find("input[type=text], textarea").val("");
             if(result == "ok"){
                 toastr.success("کلا با موفقیت ثبت شد.");
-            }
-            else{
-                toastr.error("کلا در سیستم موجود است.");
+            } else if(result == "error"){
+                toastr.error("کلا در سیستم موجود است!");
+            } else{
+                toastr.error("فیلد کد و مدل نباید خالی باشد!")
             }
         }).error(function(err){
-            console.log(err);
-            toastr.error("اشکال داخلی سرور");
+           // console.log(err);
+            toastr.error("عکس باید انتخاب شده باشد!");
         })
     });
 
@@ -417,10 +418,58 @@ $(document).ready(function(){
            $('#goods_detail_modal_body').html(tmHTML);
            // console.log(result._id);
            $('#btn-basket').val(result._id) ;
-           console.log($('#btn-basket').val());
+           // console.log($('#btn-basket').val());
        }).error(function () {
 
        })
     });
+
+    // $("#search_frm").submit(function(event){
+    //     event.preventDefault();
+    // });
+    //
+    // $('#search_btn').click(function () {
+    //    var _data = {};
+    //    _data.search_input = $('#search_input').val();
+    //    // console.log(_data.search_input);
+    //    $.ajax({
+    //        url: '/search',
+    //        method: 'POST',
+    //        data: _data
+    //    }).success(function (result) {
+    //        // console.log(result);
+    //        var tmHTML = '';
+    //        if (result.length != 0){
+    //            // $.each(result, function (i, item) {
+    //             tmHTML +=
+    //                 '<table class="table">' +
+    //                     '<thead>' +
+    //                         '<tr>' +
+    //                             '<th class="text-center" > نتایج جستجو: <strong style="color: red">'+_data.search_input+'</strong></th>' +
+    //                         '</tr>' +
+    //                     '</thead>' +
+    //                     '<tbody class="tb-body" id="search_result_table">' +
+    //                         '<tr><td class="col-sm-3">' + item.category + '</td><td class="col-sm-3">' + item.brand + '</td><td class="col-sm-3">' + item.model + '</td><td class="col-sm-3">' + item.cpu + '</td><td class="col-sm-3">' + item.ram + '</td><td class="hidden">'+i+'</td></tr>'+
+    //                     '</tbody>' +
+    //                 '</table>';
+    //            // });
+    //        }else {
+    //            tmHTML +=
+    //                '<table class="table">' +
+    //                     '<thead>' +
+    //                         '<tr>' +
+    //                             '<th class="text-center" > نتایج جستجو: <strong style="color: red">'+_data.search_input+' (چیزی یافت نشد!)</strong></th>' +
+    //                         '</tr>' +
+    //                     '</thead>' +
+    //                     '<tbody class="tb-body" id="search_result_table">' +
+    //                     '<p></p>' +
+    //                     '</tbody>' +
+    //                '</table>';
+    //        }
+    //        $('#main_div').html(tmHTML);
+    //    }).error(function () {
+    //
+    //    })
+    // });
 
 });
