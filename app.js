@@ -21,7 +21,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
     name: 'shop',
-    secret: 'kytddkhovoqyfjgfhch'
+    secret: 'kytddkhovoqyfjgfhch',
+    cookie: {maxAge:5555555,httpOnly: false}
 }));
 require('./routes/core')(app);
 // catch 404 and forward to error handler

@@ -41,9 +41,9 @@
                     </fieldset>
                 </form>
             </div>
-            <%if(data.role != 0){%>
+            <%if(data.sess != 0){%>
             <div dir="rtl">
-                <span> کاربر گرامی : <p style="color: red; display: inline"><%= data.name %></p> خوش آمدید! </span>
+                <span> کاربر گرامی : <p style="color: red; display: inline"><%= data.sess.name %></p> خوش آمدید! </span>
             </div>
             <%}%>
             <nav class="navbar navbar-inverse">
@@ -59,18 +59,18 @@
                         <li class="active"><a href="/">صفحه اصلی</a></li>
                     </ul>
 
-                    <%if(data.role == 2){%>
-                    <ul class="nav navbar-nav navbar-right" id="product">
-                        <li class="dropdown">
-                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">‍‍‍‍‍‍‍ پنل مدیریت<span class="caret"></span></a>
-                            <ul class="dropdown-menu navbar-inverse">
-                                <li><a class="text-right" href="#user_management_pop" data-toggle="modal">مدیریت کاربران</a></li>
-                                <li><a class="text-right" data-dismiss="modal" data-toggle="modal" href="#goods_management_pop">مدیریت انبار</a></li>
-                                <li><a class="text-right" data-dismiss="modal" data-toggle="modal" href="#report_management_pop">گزارش گیری</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                    <%}%>
+                    <!--<%if(data.sess.role == 2){%>-->
+                    <!--<ul class="nav navbar-nav navbar-right" id="product">-->
+                    <!--<li class="dropdown">-->
+                    <!--<a class="dropdown-toggle" data-toggle="dropdown" href="#">‍‍‍‍‍‍‍ پنل مدیریت<span class="caret"></span></a>-->
+                    <!--<ul class="dropdown-menu navbar-inverse">-->
+                    <!--<li><a class="text-right" href="#user_management_pop" data-toggle="modal">مدیریت کاربران</a></li>-->
+                    <!--<li><a class="text-right" data-dismiss="modal" data-toggle="modal" href="#goods_management_pop">مدیریت انبار</a></li>-->
+                    <!--<li><a class="text-right" data-dismiss="modal" data-toggle="modal" href="#report_management_pop">گزارش گیری</a></li>-->
+                    <!--</ul>-->
+                    <!--</li>-->
+                    <!--</ul>-->
+                    <!--<%}%>-->
 
                     <ul class="nav navbar-nav navbar-right" id="product">
                         <li class="dropdown">
@@ -83,7 +83,7 @@
                         </li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right" id="about">
-                        <li><a href="#">درباره ما</a></li>
+                        <li><a href="/about">درباره ما</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right" id="question">
                         <li><a href="#">سوالات متداول</a></li>
@@ -91,27 +91,27 @@
                     <ul class="nav navbar-nav navbar-right" id="contact">
                         <li><a href="#">تماس با ما</a></li>
                     </ul>
-                    <%if(data.role == 0){%>
+                    <%if(data.sess == 0){%>
                     <ul class="nav navbar-nav">
                         <li><a href="#login_pop" data-toggle="modal"><span class="glyphicon glyphicon-user"></span>حساب کاربری</a></li>
                     </ul>
                     <%}%>
-                    <%if(data.role == 1){%>
-                    <ul class="nav navbar-nav navbar-right" id="edit">
-                        <li><a href="#user_edit_pop" data-dismiss="modal" data-toggle="modal">ویرایش اطلاعات</a></li>
-                    </ul>
+                    <%if(data.sess.role == 1){%>
+                    <!--<ul class="nav navbar-nav navbar-right" id="edit">-->
+                    <!--<li><a href="#user_edit_pop" data-dismiss="modal" data-toggle="modal">ویرایش اطلاعات</a></li>-->
+                    <!--</ul>-->
                     <%}%>
-                    <%if(data.role != 0){%>
+                    <%if(data.sess != 0){%>
                     <ul class="nav navbar-nav navbar-right" id="exit">
                         <li><a href="/logout">خروج</a></li>
                     </ul>
                     <%}%>
-                    <%if(data.role == 1){%>
+                    <%if(data.sess.role == 1){%>
                     <ul class="nav navbar-nav pull-left">
                         <li><a href="#shoping_cart_pop" data-toggle="modal" data-dismiss="modal" id="cart-btn"><i class="glyphicon glyphicon-shopping-cart"></i>
                                 سبد خرید
-                                <input class="hidden" id="cart_user_id" value="<%=data._id%>">
-                                <span id="cart_count"><%=data.count%></span>
+                                <input class="hidden" id="cart_user_id" value="<%=data.sess._id%>">
+                                <span id="cart_count"><%=data.sess.count%></span>
                             </a>
                         </li>
                     </ul>
@@ -585,29 +585,43 @@
 
 <!--////////////////////////////////////////-->
 <div class="main">
+    <div class="text-center">
+        <input class="hidden" id="brand_inp" value="lg">
+        <p style="display: inline;">فیلتر بر اساس:</p>
+        <select name="dropdown" id="type_select">
+            <option selected>تمام محصولات</option>
+            <option>لپ تاپ</option>
+            <option>تبلت</option>
+        </select>
+    </div>
     <div class="container" id="img-contain1">
-        <%for(index in data.goods_data){%>
-        <div class="col-sm-4">
-            <div class="panel panel-primary">
-                <div class="panel-heading text-center"><%=data.goods_data[index].title%></div>
-                <input class="hidden" id="inp_good_id" value="<%=data.goods_data[index]._id%>"/>
-                <input class="hidden" id="inp_user_id" value="<%= data._id %>"/>
-                <div class="panel-body"><a href="#show_goods_pop" data-toggle="modal"><img class="img-responsive center-block panel-size goods-detail" src="<%=data.goods_data[index].image_address %>" alt="Img" value="<%=data.goods_data[index]._id%>"></a></div>
-                <div class="panel-footer text-right">
-                    <%if(data.goods_data[index].count != 0){%>
-                    <button class="btn btn-primary glyphicon glyphicon-shopping-cart basket" id="btn-basket" value="<%=data.goods_data[index]._id%>">اضافه کردن به</button>
-                    <span class="pull-left price_spn" id="price_spn"><%=data.goods_data[index].price%> تومان</span>
-                    <%}else{%>
-                    <button disabled class="btn btn-primary glyphicon glyphicon-shopping-cart basket" id="btn-basket" value="<%=data.goods_data[index]._id%>">اضافه کردن به</button>
-                    <span class="pull-left price_spn" id="price_spn">نا موجود!</span>
-                    <%}%>
+        <div class="page-body">
+            <%for(index in data.goods_data){%>
+            <div class="col-sm-4">
+                <div class="panel panel-primary">
+                    <div class="panel-heading text-center"><%=data.goods_data[index].title%></div>
+                    <input class="hidden" id="inp_good_id" value="<%=data.goods_data[index]._id%>"/>
+                    <div class="panel-body"><a href="#show_goods_pop" data-toggle="modal"><img class="img-responsive center-block panel-size goods-detail" src="<%=data.goods_data[index].image_address %>" alt="Img" value="<%=data.goods_data[index]._id%>"></a></div>
+                    <div class="panel-footer text-right">
+                        <%if(data.goods_data[index].count != 0){%>
+                        <button class="btn btn-primary glyphicon glyphicon-shopping-cart basket" id="btn-basket" value="<%=data.goods_data[index]._id%>">اضافه کردن به</button>
+                        <span class="pull-left price_spn" id="price_spn"><%=data.goods_data[index].price%> تومان</span>
+                        <%}else{%>
+                        <button disabled class="btn btn-primary glyphicon glyphicon-shopping-cart basket" id="btn-basket" value="<%=data.goods_data[index]._id%>">اضافه کردن به</button>
+                        <span class="pull-left price_spn" id="price_spn">نا موجود!</span>
+                        <%}%>
+                    </div>
                 </div>
             </div>
+            <%}%>
         </div>
-        <%}%>
     </div><br />
+    <input class="hidden" id="inp_user_id" value="<%= data.sess._id %>"/>
     <div class="text-center" dir="ltr" style="padding-bottom: 10px;">
-        <button class="glyphicon glyphicon-menu-left" id="prev_btn"></button> Previous - Next <button class="glyphicon glyphicon-menu-right" id="next_btn"></button>
+        <ul class="pager">
+            <li><button class="btn-link" id="product_previous_page" value="lg">Previous</button></li>
+            <li><button class="btn-link" id="product_next_page" value="lg">Next</button></li>
+        </ul>
     </div>
 </div>
 </div>
@@ -618,15 +632,15 @@
             <div class="col_1_of_4 span_1_of_4">
                 <h4>اطلاعات</h4>
                 <ul>
-                    <li><a href="#">درباره ما</a></li>
-                    <li><a href="#"><span>جستجو</span></a></li>
+                    <li><a href="/about">درباره ما</a></li>
+                    <!--<li><a href="#"><span>جستجو</span></a></li>-->
                     <li><a href="#"><span>تماس با ما</span></a></li>
                 </ul>
             </div>
             <div class="col_1_of_4 span_1_of_4">
                 <h4>چرا خرید از ما</h4>
                 <ul>
-                    <li><a href="">درباره ما</a></li>
+                    <!--<li><a href="">درباره ما</a></li>-->
                     <li><a href="#">سیاست حفظ حریم خصوصی</a></li>
                     <li><a href=""><span>نقشه سایت</span></a></li>
                 </ul>
@@ -661,7 +675,6 @@
         </div>
     </div>
 </div>
-<script src="javascripts/F-js.js"></script>
 <script src="javascripts/toastr.min.js"></script>
 <script src="javascripts/ajax.js"></script>
 

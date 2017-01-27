@@ -3,35 +3,94 @@
  */
 var express = require('express');
 var db = require("./mongoschema");
-var multer  = require('multer')
-var upload = multer({ dest: './public/goods_data/' })
+var multer = require('multer')
+var upload = multer({
+    dest: './public/goods_data/'
+})
 module.exports = function(app) {
     app.route('/*').get(function(req, res, next) {
+        // console.log(req.session)
         next();
     });
-    app.route('/').get(function(req, res) {
-        db.goods.find({}).sort({$natural: -1}).limit(9).lean().exec(function(err,info){
-          if(err){
+    app.route('/chart').post(function(req, res) {
+        var data = req.body;
+        if(data.chart_num == 1){
+            db.goods.aggregate([
+                { $match: { time: { $gte: parseInt(data.from_date), $lte: parseInt(data.to_date) } }},
+                {$group: {
+                    _id: "$brand",
+                    totalAmount: {
+                        $sum: "$count"
+                    }
+                }
+            }], function(err, info) {
+                if (err) {
 
-          }
-          else{
-              // console.log(info);
-            if (typeof req.session.role == 'undefined') {
-              res.render('index', {
-                  data: {
-                      role: 0,
-                      goods_data:info
-                  }
-              });
+                } else {
+                    res.json(info)
+                }
+            });
+        }
+        else if(data.chart_num == 2){
+            db.goods.aggregate([
+                { $match: { time: { $gte: parseInt(data.from_date), $lte: parseInt(data.to_date) } }},
+                {$group: {
+                    _id: "$brand",
+                    totalAmount: {
+                        $sum: { $multiply: [ "$price", "$count" ] }
+                    }
+                }
+            }], function(err, info) {
+                if (err) {
+
+                } else {
+                    res.json(info)
+                }
+            });
+        }
+        else if(data.chart_num == 3){
+            db.goods.aggregate([
+                { $match: { time: { $gte: parseInt(data.from_date), $lte: parseInt(data.to_date) } }},
+                {$group: {
+                    _id: "$brand",
+                    totalAmount: {
+                        $sum: "$sales_count"
+                    }
+                }
+            }], function(err, info) {
+                if (err) {
+
+                } else {
+                    res.json(info)
+                }
+            });
+        }
+    });
+    app.route('/').get(function(req, res) {
+        db.goods.find({}).sort({
+            $natural: -1
+        }).limit(9).lean().exec(function(err, info) {
+            if (err) {
+
+            } else {
+                // console.log(info);
+                if (typeof req.session.role == 'undefined') {
+                    var _data = {};
+                    _data.sess = 0;
+                    _data['goods_data'] = info;
+                    res.render('index', {
+                        data: _data
+                    });
+                } else {
+                    var _data = {};
+                    _data.sess = req.session;
+                    _data['goods_data'] = info;
+                    // console.log(_data);
+                    res.render('index', {
+                        data: _data
+                    });
+                }
             }
-            else{
-              let _data = req.session;
-              _data['goods_data'] = info;
-              res.render('index', {
-                  data: _data
-              });
-            }
-          }
         });
     });
 
@@ -41,12 +100,9 @@ module.exports = function(app) {
         db.users.findOne({
             username: _username
         }, {}).lean().exec(function(err, result) {
-            if (err) {
-
-            } else {
+            if (err) {} else {
                 if (result != null) {
                     if (result.password == data.password) {
-
                         req.session.first_name = result.first_name;
                         req.session.last_name = result.last_name;
                         req.session.username = result.username;
@@ -61,8 +117,11 @@ module.exports = function(app) {
                         res.redirect('/');
 
                     } else {
-
+                        // console.log(data);
+                        // console.log(result);
                     }
+                } else {
+                    // console.log(result)
                 }
             }
         });
@@ -84,8 +143,10 @@ module.exports = function(app) {
                         if (err) {
 
                         } else {
-                            var _data = req.session;
-                            _data.enroll_res = "ok";
+                            req.session.name = data.first_name + " " + data.last_name;
+                            var _data = {};
+                            _data.sess = req.session
+                            _data.enroll_res = "ثبت نام با موفقیت انجام شد!";
                             res.render("index", {
                                 data: _data
                             });
@@ -104,11 +165,11 @@ module.exports = function(app) {
     });
 
     var type = upload.single('image');
-    app.post('/add_goods',type,function(req, res) {
+    app.post('/add_goods', type, function(req, res) {
         var data = req.body;
         data.image_address = 'goods_data/' + req.file.filename;
-        console.log(data);
-        if(data.code.trim() != '' && data.model.trim() != ''){
+        // console.log(data);
+        if (data.code.trim() != '' && data.model.trim() != '') {
             db.goods.findOne({
                 code: data.code
             }, {}).lean().exec(function(err, resualt) {
@@ -117,6 +178,11 @@ module.exports = function(app) {
                 } else {
                     if (resualt == null) {
                         var temp = new db.goods(data);
+                        temp.sales_count = 0;
+                        var time = new Date().toDateString();
+                        temp.time = Date.parse(time);
+                        // console.log(temp);
+
                         temp.save(function(err) {
                             if (err) {
                                 res.sendStatus(500);
@@ -129,7 +195,7 @@ module.exports = function(app) {
                     }
                 }
             })
-        }else{
+        } else {
             res.send('blank');
         }
     });
@@ -147,15 +213,12 @@ module.exports = function(app) {
                     'model': data
                 }, {
                     'code': data
-                }, {
-                    'count': data
                 }]
             }, {}).lean().
             exec(function(err, result) {
                 if (err) {
                     res.sendStatus(500);
                 } else {
-                    //                 console.log(result);
                     res.send(result);
                 }
 
@@ -164,6 +227,7 @@ module.exports = function(app) {
     });
     app.route('/delete_goods').post(function(req, res) {
         var data = req.body;
+        // console.log(data);
         db.goods.findOneAndRemove({
             _id: data._id
         }, function(err) {
@@ -177,7 +241,7 @@ module.exports = function(app) {
     app.route('/change_goods').post(function(req, res) {
         var data = req.body;
         var _code = data.code;
-        console.log(_code);
+        // console.log(_code);
         db.goods.findOne({
             code: _code
         }, {}, function(err, result) {
@@ -305,47 +369,55 @@ module.exports = function(app) {
         });
     });
 
-    app.route('/apple').get(function (req,res) {
-            db.goods.find({brand:'apple'}).lean().exec(function(err,info){
-               if(err){
+    app.route('/apple').get(function(req, res) {
+        db.goods.find({
+            brand: 'apple'
+        }).sort({
+            $natural: -1
+        }).limit(9).lean().exec(function(err, info) {
+            if (err) {
 
-               }
-               else{
-                   if (typeof req.session.role == 'undefined') {
-                       res.render('apple_goods', {
-                           data: {
-                               role: 0,
-                               goods_data:info
-                           }
-                       });
-                   }
-                   else{
-                       let _data = req.session;
-                       _data['goods_data'] = info;
-                       res.render('apple_goods', {
-                           data: _data
-                       });
-                   }
-               }
-            });
-    });
-    app.route('/samsung').get(function (req,res) {
-        db.goods.find({brand:'samsung'}).lean().exec(function(err,info){
-            if(err){
-
-            }
-            else{
+            } else {
                 if (typeof req.session.role == 'undefined') {
-                    res.render('samsung_goods', {
-                        data: {
-                            role: 0,
-                            goods_data:info
-                        }
+                    var _data = {};
+                    _data.sess = 0;
+                    _data['goods_data'] = info;
+                    res.render('apple_goods', {
+                        data: _data
+                    });
+                } else {
+                    var _data = {};
+                    _data.sess = req.session;
+                    _data['goods_data'] = info;
+                    // console.log(_data);
+                    res.render('apple_goods', {
+                        data: _data
                     });
                 }
-                else{
-                    let _data = req.session;
+            }
+        });
+    });
+    app.route('/samsung').get(function(req, res) {
+        db.goods.find({
+            brand: 'samsung'
+        }).sort({
+            $natural: -1
+        }).limit(9).lean().exec(function(err, info) {
+            if (err) {
+
+            } else {
+                if (typeof req.session.role == 'undefined') {
+                    var _data = {};
+                    _data.sess = 0;
                     _data['goods_data'] = info;
+                    res.render('samsung_goods', {
+                        data: _data
+                    });
+                } else {
+                    var _data = {};
+                    _data.sess = req.session;
+                    _data['goods_data'] = info;
+                    // console.log(_data);
                     res.render('samsung_goods', {
                         data: _data
                     });
@@ -353,23 +425,27 @@ module.exports = function(app) {
             }
         });
     });
-    app.route('/lg').get(function (req,res) {
-        db.goods.find({brand:'lg'}).lean().exec(function(err,info){
-            if(err){
+    app.route('/lg').get(function(req, res) {
+        db.goods.find({
+            brand: 'lg'
+        }).sort({
+            $natural: -1
+        }).limit(9).lean().exec(function(err, info) {
+            if (err) {
 
-            }
-            else{
+            } else {
                 if (typeof req.session.role == 'undefined') {
-                    res.render('lg_goods', {
-                        data: {
-                            role: 0,
-                            goods_data:info
-                        }
-                    });
-                }
-                else{
-                    let _data = req.session;
+                    var _data = {};
+                    _data.sess = 0;
                     _data['goods_data'] = info;
+                    res.render('lg_goods', {
+                        data: _data
+                    });
+                } else {
+                    var _data = {};
+                    _data.sess = req.session;
+                    _data['goods_data'] = info;
+                    // console.log(_data);
                     res.render('lg_goods', {
                         data: _data
                     });
@@ -378,86 +454,92 @@ module.exports = function(app) {
         });
     });
 
-    app.route('/add_cart').post(function (req,res) {
-       var data = req.body;
-       // console.log(data);
-       db.users.findOne({_id : data.user_id},{},function (err,result) {
-           if(err){
-
-           }else {
-               var check = false;
-               for (var i in result.shop_list)
-               {
-                   if(data.good_id == result.shop_list[i])
-                       check = true;
-               }
-               if(check == false){
-                   result.shop_list.push(data.good_id);
-                   // console.log(result.shop_list);
-                   result.save(function (err) {
-                       if (err) {
-
-                       } else {
-                           req.session.count = result.shop_list.length;
-                           res.send("ok");
-                       }
-                   })
-               }
-               else{
-                   res.send('nop!');
-               }
-           }
-       });
-    });
-    app.route('/show_cart').post(function (req,res) {
-       var data = req.body;
-       var arr = [];
-       db.users.findOne({_id:data.user_id},{},function (err,result) {
-           if(err){
-
-           }else{
-
-               var temp = 0;
-               result.shop_list.forEach(function (element) {
-                   db.goods.findOne({_id:element},{}).lean().exec(function(err,g_result){
-                       if(err){
-
-                       }else{
-                           var cart_object = {};
-                               cart_object.information = g_result.category +" "+ g_result.brand +" "+ g_result.model;
-                               cart_object.price = g_result.price;
-                               cart_object.user_id = result.user_id;
-                               cart_object.good_id = g_result._id;
-                               cart_object.qty = 1;
-                               arr.push(cart_object);
-                               temp++;
-                               if(temp === result.shop_list.length){
-                                   req.session.count = result.shop_list.length;
-                                   res.send(arr);
-                               }else{
-                                   // console.log("basket is empty!");
-                               }
-                       }
-                   });
-               });
-           }
-       });
-    });
-    app.route('/delete_cart').post(function (req,res) {
+    app.route('/add_cart').post(function(req, res) {
         var data = req.body;
         // console.log(data);
-        db.users.findOne({_id:data.user_id},{},function (err,result) {
-            if(err){
+        db.users.findOne({
+            _id: data.user_id
+        }, {}, function(err, result) {
+            if (err) {
 
-            }else{
+            } else {
+                var check = false;
+                for (var i in result.shop_list) {
+                    if (data.good_id == result.shop_list[i])
+                        check = true;
+                }
+                if (check == false && result.role != 2) {
+                    result.shop_list.push(data.good_id);
+                    // console.log(result.shop_list);
+                    result.save(function(err) {
+                        if (err) {
+
+                        } else {
+                            req.session.count = result.shop_list.length;
+                            res.send("ok");
+                        }
+                    })
+                } else {
+                    res.send('nop!');
+                }
+            }
+        });
+    });
+    app.route('/show_cart').post(function(req, res) {
+        var data = req.body;
+        var arr = [];
+        db.users.findOne({
+            _id: data.user_id
+        }, {}, function(err, result) {
+            if (err) {
+
+            } else {
+
+                var temp = 0;
+                result.shop_list.forEach(function(element) {
+                    db.goods.findOne({
+                        _id: element
+                    }, {}).lean().exec(function(err, g_result) {
+                        if (err) {
+
+                        } else {
+                            var cart_object = {};
+                            cart_object.information = g_result.category + " " + g_result.brand + " " + g_result.model;
+                            cart_object.price = g_result.price;
+                            cart_object.user_id = result.user_id;
+                            cart_object.good_id = g_result._id;
+                            cart_object.qty = 1;
+                            arr.push(cart_object);
+                            temp++;
+                            if (temp === result.shop_list.length) {
+                                req.session.count = result.shop_list.length;
+                                res.send(arr);
+                            } else {
+                                // console.log("basket is empty!");
+                            }
+                        }
+                    });
+                });
+            }
+        });
+    });
+    app.route('/delete_cart').post(function(req, res) {
+        var data = req.body;
+        // console.log(data);
+        db.users.findOne({
+            _id: data.user_id
+        }, {}, function(err, result) {
+            if (err) {
+
+            } else {
                 var index = result.shop_list.indexOf(data.good_id);
-                if(index > -1){
+                if (index > -1) {
                     result.shop_list.splice(index, 1);
                 }
-                result.save(function (err) {
-                    if(err){
+                result.save(function(err) {
+                    if (err) {
 
-                    }else{
+                    } else {
                         req.session.count = result.shop_list.length;
                         res.send("ok");
                     }
@@ -466,47 +548,47 @@ module.exports = function(app) {
         });
     });
 
-    app.route('/payment').post(function (req,res) {
+    app.route('/payment').post(function(req, res) {
         var g_i_index = 2;
-        var count = 0;var cnt = 0;
+        var count = 0;
+        var cnt = 0;
         var data = req.body;
-        Object.keys(data).forEach(function (value, index) {
-          if(cnt == g_i_index){
-              db.goods.findOne({_id: data[value]}, {},function (err,result) {
-                      if (err) {
+        Object.keys(data).forEach(function(value, index) {
+            if (cnt == g_i_index) {
+                db.goods.findOne({
+                    _id: data[value]
+                }, {}, function(err, result) {
+                    if (err) {
 
-                      }
-                      else {
-                          // console.log(data[value]);
-                          // console.log(data[Object.keys(data)[index+1]]);
-                          count = parseInt(result.count) - parseInt(data[Object.keys(data)[index+1]]);
-                          result.count = count;
-                          result.save(function (err) {
-                              if(err){
+                    } else {
+                        count = parseInt(result.count) - parseInt(data[Object.keys(data)[index + 1]]);
+                        result.count = count;
+                        result.sales_count += parseInt(data[Object.keys(data)[index + 1]]);
+                        result.save(function(err) {
+                            if (err) {
 
-                              }
-                              else{
+                            } else {
 
-                              }
-                          });
-                      }
-              });
-              g_i_index += 4;
-          }
-          cnt++;
-        });
-        db.users.findOne({_id: data.user_id},{},function (err,result) {
-            if(err){
-
+                            }
+                        });
+                    }
+                });
+                g_i_index += 4;
             }
-            else{
+            cnt++;
+        });
+        db.users.findOne({
+            _id: data.user_id
+        }, {}, function(err, result) {
+            if (err) {
+
+            } else {
                 result.shopped_list.push(result.shop_list);
                 result.shop_list = [];
-                result.save(function (err) {
-                    if(err){
+                result.save(function(err) {
+                    if (err) {
 
-                    }
-                    else{
+                    } else {
                         req.session.count = 0;
                         res.send('ok');
                     }
@@ -515,20 +597,20 @@ module.exports = function(app) {
         });
     });
 
-    app.route('/show_goods_detail').post(function (req,res) {
+    app.route('/show_goods_detail').post(function(req, res) {
         var data = req.body;
-        db.goods.findOne({_id: data.goods_id}, {},function (err,result) {
-            if(err){
+        db.goods.findOne({
+            _id: data.goods_id
+        }, {}, function(err, result) {
+            if (err) {
 
-            }
-            else{
+            } else {
                 res.send(result);
             }
         });
     });
 
-    app.route('/search').post(function (req,res) {
-        // console.log(req.body.search_input);
+    app.route('/search').post(function(req, res) {
         if (req.body.search_input.trim() == '') {
 
         } else {
@@ -555,11 +637,10 @@ module.exports = function(app) {
                         res.render('search', {
                             data: {
                                 role: 0,
-                                goods_data:result
+                                goods_data: result
                             }
                         });
-                    }
-                    else{
+                    } else {
                         let _data = req.session;
                         _data['goods_data'] = result;
                         res.render('search', {
@@ -570,4 +651,105 @@ module.exports = function(app) {
             })
         }
     });
+
+    app.route('/about').get(function (req, res) {
+        if (typeof req.session.role == 'undefined') {
+            res.render('about', {
+                data: {
+                    role: 0
+                }
+            });
+        } else {
+            res.render('about', {
+                data: req.session
+            });
+        }
+    });
+
+    app.route('/product_page').post(function (req, res) {
+        var data = req.body;
+        // console.log(data);
+        if(data._brand == 'apple'){
+            if(data._type != 'تمام محصولات'){
+                db.goods.find({
+                    $and: [ { brand: 'apple' }, { category: data._type } ]
+                        }).sort({
+                    $natural: -1
+                }).limit(9).skip(data._start).lean().exec(function(err, result) {
+                    if (err) {
+
+                    } else {
+                        res.send(result);
+                    }
+                });
+            }else{
+                db.goods.find({
+                    brand: 'apple'
+                }).sort({
+                    $natural: -1
+                }).limit(9).skip(data._start).lean().exec(function(err, result) {
+                    if (err) {
+
+                    } else {
+                        res.send(result);
+                    }
+                });
+            }
+        }
+        else if(data._brand == 'samsung'){
+            if(data._type != 'تمام محصولات'){
+                db.goods.find({
+                    $and: [ { brand: 'samsung' }, { category: data._type } ]
+                }).sort({
+                    $natural: -1
+                }).limit(9).skip(data._start).lean().exec(function(err, result) {
+                    if (err) {
+
+                    } else {
+                        res.send(result);
+                    }
+                });
+            }else{
+                db.goods.find({
+                    brand: 'samsung'
+                }).sort({
+                    $natural: -1
+                }).limit(9).skip(data._start).lean().exec(function(err, result) {
+                    if (err) {
+
+                    } else {
+                        res.send(result);
+                    }
+                });
+            }
+        }
+        else if(data._brand == 'lg'){
+            if(data._type != 'تمام محصولات'){
+                db.goods.find({
+                    $and: [ { brand: 'lg' }, { category: data._type } ]
+                }).sort({
+                    $natural: -1
+                }).limit(9).skip(data._start).lean().exec(function(err, result) {
+                    if (err) {
+
+                    } else {
+                        res.send(result);
+                    }
+                });
+            }else{
+                db.goods.find({
+                    brand: 'lg'
+                }).sort({
+                    $natural: -1
+                }).limit(9).skip(data._start).lean().exec(function(err, result) {
+                    if (err) {
+
+                    } else {
+                        res.send(result);
+                    }
+                });
+            }
+        }
+    });
+
 };

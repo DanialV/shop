@@ -60,16 +60,16 @@
                                 </ul>
 
                                 <%if(data.role == 2){%>
-                                <ul class="nav navbar-nav navbar-right" id="product">
-                                    <li class="dropdown">
-                                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">‍‍‍‍‍‍‍ پنل مدیریت<span class="caret"></span></a>
-                                        <ul class="dropdown-menu navbar-inverse">
-                                            <li><a class="text-right" href="#user_management_pop" data-toggle="modal">مدیریت کاربران</a></li>
-                                            <li><a class="text-right" data-dismiss="modal" data-toggle="modal" href="#goods_management_pop">مدیریت انبار</a></li>
-                                            <li><a class="text-right" data-dismiss="modal" data-toggle="modal" href="#report_management_pop">گزارش گیری</a></li>
-                                        </ul>
-                                    </li>
-                                </ul>
+                                <!--<ul class="nav navbar-nav navbar-right" id="product">-->
+                                    <!--<li class="dropdown">-->
+                                        <!--<a class="dropdown-toggle" data-toggle="dropdown" href="#">‍‍‍‍‍‍‍ پنل مدیریت<span class="caret"></span></a>-->
+                                        <!--<ul class="dropdown-menu navbar-inverse">-->
+                                            <!--<li><a class="text-right" href="#user_management_pop" data-toggle="modal">مدیریت کاربران</a></li>-->
+                                            <!--<li><a class="text-right" data-dismiss="modal" data-toggle="modal" href="#goods_management_pop">مدیریت انبار</a></li>-->
+                                            <!--<li><a class="text-right" data-dismiss="modal" data-toggle="modal" href="#report_management_pop">گزارش گیری</a></li>-->
+                                        <!--</ul>-->
+                                    <!--</li>-->
+                                <!--</ul>-->
                                 <%}%>
 
                                 <ul class="nav navbar-nav navbar-right" id="product">
@@ -83,7 +83,7 @@
                                     </li>
                                 </ul>
                                 <ul class="nav navbar-nav navbar-right" id="about">
-                                    <li><a href="#">درباره ما</a></li>
+                                    <li><a href="/about">درباره ما</a></li>
                                 </ul>
                                 <ul class="nav navbar-nav navbar-right" id="question">
                                     <li><a href="#">سوالات متداول</a></li>
@@ -639,17 +639,18 @@
                 <thead>
                 <tr>
                     <%if(data.goods_data.length != 0){%>
-                        <th> نتایج جستجو: <strong style="color: red"><%= data.goods_data.search_input %> (<%= data.goods_data.length %> مورد یافت شد!) </strong></th>
+                        <th> نتایج جستجو: <strong style="color: red"> (<%= data.goods_data.length %>)   مورد یافت شد! </strong></th>
                     <%}else{%>
                         <th> نتایج جستجو: <strong style="color: red"><%= data.goods_data.search_input %> (موردی یافت نشد!)</strong></th>
                     <%}%>
                 </tr>
                 </thead>
                 <tbody id="search_result_table_body" style="height: 500px;">
+                <input class="hidden" id="inp_user_id" value="<%= data._id %>"/>
                     <%for(var index=0 ; index < data.goods_data.length ; index++){%>
                         <tr>
                             <td>
-                                <pre><a class="goods-detail" href="#show_goods_pop" data-toggle="modal" value="<%=data.goods_data[index]._id%>"><%= data.goods_data[index].category %>  <%= data.goods_data[index].brand %>  <%= data.goods_data[index].model %>  <%= data.goods_data[index].cpu %>  <%= data.goods_data[index].ram %> ram</a></pre>
+                                <pre><img><a class="goods-detail" href="#show_goods_pop" data-toggle="modal" value="<%=data.goods_data[index]._id%>"><%= data.goods_data[index].category %>  <%= data.goods_data[index].brand %>  <%= data.goods_data[index].model %>  <%= data.goods_data[index].cpu %>  <%= data.goods_data[index].ram %> ram</a></pre>
                             </td>
                         </tr>
                     <%}%>
@@ -663,15 +664,15 @@
                     <div class="col_1_of_4 span_1_of_4">
                         <h4>اطلاعات</h4>
                         <ul>
-                            <li><a href="#">درباره ما</a></li>
-                            <li><a href="#"><span>جستجو</span></a></li>
+                            <li><a href="/about">درباره ما</a></li>
+                            <!--<li><a href="#"><span>جستجو</span></a></li>-->
                             <li><a href="#"><span>تماس با ما</span></a></li>
                         </ul>
                     </div>
                     <div class="col_1_of_4 span_1_of_4">
                         <h4>چرا خرید از ما</h4>
                         <ul>
-                            <li><a href="">درباره ما</a></li>
+                            <!--<li><a href="">درباره ما</a></li>-->
                             <li><a href="#">سیاست حفظ حریم خصوصی</a></li>
                             <li><a href=""><span>نقشه سایت</span></a></li>
                         </ul>
@@ -706,7 +707,6 @@
                 </div>
             </div>
         </div>
-        <script src="javascripts/F-js.js"></script>
         <script src="javascripts/toastr.min.js"></script>
         <script src="javascripts/ajax.js"></script>
 

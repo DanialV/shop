@@ -1,6 +1,20 @@
 /*.tb-body {*/
     /*height: 500px;*/
 /*}*/
+#type_select {
+	width: 27%;
+	padding: 10px 20px;
+	border: none;
+	border-radius: 4px;
+	background-color: #f1f1f1;
+}
+body{
+    padding: 0!important;
+}
+.slider-img {
+    height: 345px!important;
+    width: 1000px!important;
+}
 #search-input {
     background-color: white;
     background-image: url('searchicon.png');
@@ -17,6 +31,7 @@
 .panel-size {
     width: 320px;
     height: 250px;
+	padding: 2px;
 }
 .price_spn {
     color: green;
