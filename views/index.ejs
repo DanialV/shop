@@ -698,7 +698,7 @@
                         <div class="panel panel-primary">
                             <div class="panel-heading text-center"><%=data.goods_data[index].title%></div>
                             <input class="hidden" id="inp_good_id" value="<%=data.goods_data[index]._id%>"/>
-                            <div class="panel-body"><a href="#show_goods_pop" data-toggle="modal"><img class="img-responsive center-block panel-size goods-detail" src="<%=data.goods_data[index].image_address %>" alt="Img" value="<%=data.goods_data[index]._id%>"></a></div>
+                            <div class="panel-body"><a href="#show_goods_pop" data-toggle="modal"><img class="img-responsive center-block panel-size goods-detail" src="/img/<%=data.goods_data[index]._id%>" alt="Img" value="<%=data.goods_data[index]._id%>"></a></div>
                             <div class="panel-footer text-right">
                                 <%if(data.goods_data[index].count != 0){%>
                                     <button class="btn btn-primary glyphicon glyphicon-shopping-cart basket" id="btn-basket" value="<%=data.goods_data[index]._id%>">اضافه کردن به</button>

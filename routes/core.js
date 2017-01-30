@@ -4,8 +4,9 @@
 var express = require('express');
 var db = require("./mongoschema");
 var multer = require('multer');
+var storage = multer.memoryStorage()
 var upload = multer({
-    dest: './public/goods_data/'
+    storage: storage
 })
 module.exports = function(app) {
     app.route('/*').get(function(req, res, next) {
@@ -289,11 +290,42 @@ module.exports = function(app) {
         req.session = null;
         res.redirect('/');
     });
+  app.get('/img', function(req, res, next) {
+        try {
+            db.goods.findOne({}, function(err, doc) {
+                if (err)
+                    res.send(err);
+                if (doc) {
+                    res.contentType(doc.img.contentType);
+                    res.send(doc.img.image);
+                }
+            });
+        } catch (e) {
+            res.send(e);
+        }
+    });
 
+    app.get('/img/:id', function(req, res) {
+        try {
+            db.goods.findOne({
+                _id: req.params.id
+            }, function(err, doc) {
+                if (err)
+                    res.send(err);
+                res.setHeader('Cache-Control', 'public, max-age=3000000');
+                res.contentType(doc.img.contentType);
+                res.send(doc.img.image);
+            });
+        } catch (e) {
+            res.send(e);
+        }
+    });
     var type = upload.single('image');
     app.post('/add_goods', type, function(req, res) {
         var data = req.body;
-        data.image_address = 'goods_data/' + req.file.filename;
+        data.img = {};
+        data.img.image = req.file.buffer;
+        data.img.contentType = req.file.mimetype;
         // console.log(data);
         if (data.code.trim() != '' && data.model.trim() != '') {
             db.goods.findOne({
