@@ -231,12 +231,12 @@
 
     <!-- User_ Management Modal-->
         <div class="modal fade" id="user_management_pop" role="dialog">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-lg">
 
                 <!-- Modal content-->
                 <div class="modal-content">
                     <div class="modal-header" style="padding:15px 230px;">
-                        <h4 dir="rtl"><span class="glyphicon glyphicon-user"></span>مدیریت کاربران</h4>
+                        <h4 dir="rtl" class="text-center"><span class="glyphicon glyphicon-user"></span>مدیریت کاربران</h4>
                     </div>
                     <div class="modal-header">
                         <div class="form-group">
@@ -247,9 +247,10 @@
                         <table class="table">
                             <thead>
                             <tr>
-                                <th class="col-sm-3">نام</th>
-                                <th class="col-sm-4">نام خانوادگی</th>
-                                <th>نام کاربری</th>
+                                <th class="col-sm-2">نام</th>
+                                <th class="col-sm-2">نام خانوادگی</th>
+                                <th class="col-sm-6">نام کاربری</th>
+                                <th>تایید عضویت</th>
                             </tr>
                             </thead>
                             <tbody id="users_table">
@@ -290,6 +291,9 @@
                             </div>
                             <div style="padding: 0px 0px 10px;">
                                 <input id="address" class="form-control text-center" type="text" name="address" placeholder="آدرس">
+                            </div>
+                            <div>
+                                <input id="credit" class="form-control text-center" type="text" name="address" placeholder="اعتبار">
                             </div>
                             <button id="change_users_save" type="button" class="btn btn-success btn-block" data-dismiss="modal"><span class="glyphicon glyphicon-saved"></span> ذخیره</button>
                         </form>
@@ -568,6 +572,14 @@
                               تا تاریخ:
                               <input type="date" id="to_date" value="2017-01-31">
                           </div>
+                          <div>
+                              <p style="display: inline;">فیلتر بر اساس:</p>
+                              <select name="dropdown" id="type_select">
+                                  <option selected>تمام محصولات</option>
+                                  <option>لپ تاپ</option>
+                                  <option>تبلت</option>
+                              </select>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -600,6 +612,10 @@
                             <tbody id="cart_table">
                             </tbody>
                         </table>
+                        <div style="background-color: lightcoral;margin-bottom: 5px;">
+                            <span>میزان اعتبار:</span>
+                            <span id="credit_amount_spn" class="pull-left"></span>
+                        </div>
                         <div style="background-color: lightcoral;margin-bottom: 5px;">
                             <span>قیمت کل:</span>
                             <span id="totalcost_spn" class="pull-left"></span>

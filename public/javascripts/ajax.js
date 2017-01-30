@@ -199,7 +199,17 @@ $(document).ready(function(){
             users_table_data = users;
             var trHTML = '';
             $.each(users, function (i, item) {
-                trHTML += '<tr><td class="col-sm-3">' + item.first_name + '</td><td class="col-sm-4">' + item.last_name + '</td><td style="width: 50px;">' + item.username + '</td><td><button class="btn btn-primary btn-sm" type="button" data-toggle="modal" data-target="#user_edit_management_pop">ویرایش</button></td></td><td><button class="btn btn-danger btn-sm" type="button">حذف</button></td><td class="hidden">'+i+'</td></tr>';
+                trHTML += '<tr><td class="col-sm-2">' + item.first_name + '</td><td class="col-sm-2">' + item.last_name + '</td><td>' + item.username + '</td>';
+                if(item.role == 2){
+                    trHTML += '<div><td><button class="btn btn-primary btn-sm" type="button" data-toggle="modal" data-target="#user_edit_management_pop">ویرایش</button></td><td><button class="btn btn-danger btn-sm" type="button" disabled>حذف</button></td><td><button class="btn btn-success btn-sm glyphicon glyphicon-ok" id="valid_btn"  type="button" disabled></button></td></div><td class="hidden">'+i+'</td></tr>';
+                }else{
+                    trHTML += '<div><td><button class="btn btn-primary btn-sm" type="button" data-toggle="modal" data-target="#user_edit_management_pop">ویرایش</button></td><td><button class="btn btn-danger btn-sm" type="button">حذف</button></td>';
+                    if(item.validation == true){
+                        trHTML += '<td><button class="btn btn-success btn-sm glyphicon glyphicon-ok" id="valid_btn"  type="button" disabled></button></td></div><td class="hidden">'+i+'</td></tr>';
+                    }else{
+                        trHTML += '<td><button class="btn btn-success btn-sm" id="valid_btn"  type="button" value="تایید">تایید</button></td></div><td class="hidden">'+i+'</td></tr>';
+                    }
+                }
             });
             $("#users_table").html(trHTML);
         }).error(function(){
@@ -217,8 +227,18 @@ $(document).ready(function(){
                 }
                 users_table_data.splice(index,1);
                 var trHTML = '';
-                $.each(users_table_data, function (i, item) {
-                    trHTML += '<tr><td class="col-sm-3">' + item.first_name + '</td><td>' + item.last_name + '</td><td style="width: 50px;">' + item.username + '</td><td><button class="btn btn-primary btn-sm" type="button" data-toggle="modal" data-target="#user_edit_management_pop">ویرایش</button></td></td><td><button class="btn btn-danger btn-sm" type="button">حذف</button></td><td class="hidden">'+i+'</td></tr>';
+                $.each(users, function (i, item) {
+                    trHTML += '<tr><td class="col-sm-2">' + item.first_name + '</td><td class="col-sm-2">' + item.last_name + '</td><td>' + item.username + '</td>';
+                    if(item.role == 2){
+                        trHTML += '<div><td><button class="btn btn-primary btn-sm" type="button" data-toggle="modal" data-target="#user_edit_management_pop">ویرایش</button></td><td><button class="btn btn-danger btn-sm" type="button" disabled>حذف</button></td><td><button class="btn btn-success btn-sm glyphicon glyphicon-ok" id="valid_btn"  type="button" disabled></button></td></div><td class="hidden">'+i+'</td></tr>';
+                    }else{
+                        trHTML += '<div><td><button class="btn btn-primary btn-sm" type="button" data-toggle="modal" data-target="#user_edit_management_pop">ویرایش</button></td><td><button class="btn btn-danger btn-sm" type="button">حذف</button></td>';
+                        if(item.validation == true){
+                            trHTML += '<td><button class="btn btn-success btn-sm glyphicon glyphicon-ok" id="valid_btn"  type="button" disabled></button></td></div><td class="hidden">'+i+'</td></tr>';
+                        }else{
+                            trHTML += '<td><button class="btn btn-success btn-sm" id="valid_btn"  type="button" value="تایید">تایید</button></td></div><td class="hidden">'+i+'</td></tr>';
+                        }
+                    }
                 });
                 $("#users_table").html(trHTML);
             }).error(function(){
@@ -235,6 +255,13 @@ $(document).ready(function(){
             $('#number').val(changable_data.number);
             $('#email').val(changable_data.email);
             $('#address').val(changable_data.address);
+            if(changable_data.role == 1){
+                $('#credit').removeClass('hidden');
+                $('#credit').val(changable_data.credit);
+            }
+            else{
+                $('#credit').addClass('hidden');
+            }
         });
         $('#change_users_save').click(function () {
 
@@ -246,6 +273,9 @@ $(document).ready(function(){
             _data.email = $('#email').val();
             _data.address = $('#address').val();
             _data._id = edit_data._id;
+            if(edit_data.role == 1){
+                _data.credit = $('#credit').val();
+            }
             $("#change_users_form").submit(function(event){
                 event.preventDefault();
             });
@@ -265,7 +295,17 @@ $(document).ready(function(){
                     users_table_data = users;
                     var trHTML = '';
                     $.each(users, function (i, item) {
-                        trHTML += '<tr><td class="col-sm-3">' + item.first_name + '</td><td>' + item.last_name + '</td><td style="width: 50px;">' + item.username + '</td><td><button class="btn btn-primary btn-sm" type="button" data-toggle="modal" data-target="#user_edit_management_pop">ویرایش</button></td></td><td><button class="btn btn-danger btn-sm" type="button">حذف</button></td><td class="hidden">'+i+'</td></tr>';
+                        trHTML += '<tr><td class="col-sm-2">' + item.first_name + '</td><td class="col-sm-2">' + item.last_name + '</td><td>' + item.username + '</td>';
+                        if(item.role == 2){
+                            trHTML += '<div><td><button class="btn btn-primary btn-sm" type="button" data-toggle="modal" data-target="#user_edit_management_pop">ویرایش</button></td><td><button class="btn btn-danger btn-sm" type="button" disabled>حذف</button></td><td><button class="btn btn-success btn-sm glyphicon glyphicon-ok" id="valid_btn"  type="button" disabled></button></td></div><td class="hidden">'+i+'</td></tr>';
+                        }else{
+                            trHTML += '<div><td><button class="btn btn-primary btn-sm" type="button" data-toggle="modal" data-target="#user_edit_management_pop">ویرایش</button></td><td><button class="btn btn-danger btn-sm" type="button">حذف</button></td>';
+                            if(item.validation == true){
+                                trHTML += '<td><button class="btn btn-success btn-sm glyphicon glyphicon-ok" id="valid_btn"  type="button" disabled></button></td></div><td class="hidden">'+i+'</td></tr>';
+                            }else{
+                                trHTML += '<td><button class="btn btn-success btn-sm" id="valid_btn"  type="button" value="تایید">تایید</button></td></div><td class="hidden">'+i+'</td></tr>';
+                            }
+                        }
                     });
                     $("#users_table").html(trHTML);
                 }).error(function(){
@@ -275,19 +315,58 @@ $(document).ready(function(){
 
             })
         });
+        $('#users_table').on('click','tr td :button:contains(تایید)',function(e){
+            var _data = {};
+            _data.valid = true;
+            _data._id = users_table_data[$(this).closest('tr').find('td:last').text()]._id;
+            $.ajax({
+                url: '/user_valid_admin',
+                method: 'POST',
+                data: _data
+            }).success(function (result) {
+                if(result == 'ok'){
+                    $.ajax({
+                        url: '/user_management',
+                        method:'POST',
+                        data:{search : $("#search_user").val()}
+                    }).success(function(users){
+                        users_table_data = users;
+                        var trHTML = '';
+                        $.each(users, function (i, item) {
+                            trHTML += '<tr><td class="col-sm-2">' + item.first_name + '</td><td class="col-sm-2">' + item.last_name + '</td><td>' + item.username + '</td>';
+                            if(item.role == 2){
+                                trHTML += '<div><td><button class="btn btn-primary btn-sm" type="button" data-toggle="modal" data-target="#user_edit_management_pop">ویرایش</button></td><td><button class="btn btn-danger btn-sm" type="button" disabled>حذف</button></td><td><button class="btn btn-success btn-sm glyphicon glyphicon-ok" id="valid_btn"  type="button" disabled></button></td></div><td class="hidden">'+i+'</td></tr>';
+                            }else{
+                                trHTML += '<div><td><button class="btn btn-primary btn-sm" type="button" data-toggle="modal" data-target="#user_edit_management_pop">ویرایش</button></td><td><button class="btn btn-danger btn-sm" type="button">حذف</button></td>';
+                                if(item.validation == true){
+                                    trHTML += '<td><button class="btn btn-success btn-sm glyphicon glyphicon-ok" id="valid_btn"  type="button" disabled></button></td></div><td class="hidden">'+i+'</td></tr>';
+                                }else{
+                                    trHTML += '<td><button class="btn btn-success btn-sm" id="valid_btn"  type="button" value="تایید">تایید</button></td></div><td class="hidden">'+i+'</td></tr>';
+                                }
+                            }
+                        });
+                        $("#users_table").html(trHTML);
+                    }).error(function(){
+
+                    });
+                }
+            }).error(function () {
+
+            });
+        });
 
     });
 
     //for adding goods to basket
     $(document).on('click', 'button', function () {
         var val = this.getAttribute("value");
-        if(val != null && val != "apple" && val != 'samsung' && val != 'lg'){
+        if(val != null && val != "apple" && val != 'samsung' && val != 'lg' && val != 'تایید'){
             var goods_id;
             goods_id = this.value;
             var _data = {};
             _data.good_id = goods_id;
             _data.user_id = $("#inp_user_id").val();
-            console.log($("#inp_user_id").val());
+            // console.log($("#inp_user_id").val());
             $.ajax({
                 url:'/add_cart',
                 method:'POST',
@@ -313,11 +392,23 @@ $(document).ready(function(){
         var quantity = 0;
         var _data = {};
         _data.user_id = $("#cart_user_id").val();
+        // for credit
+        $.ajax({
+            url: '/credit',
+            method: 'POST',
+            data: {user_id: $("#cart_user_id").val()}
+        }).success(function (result) {
+            $('#credit_amount_spn').text(result);
+        }).error(function () {
+
+        });
+
         $.ajax({
             url: '/show_cart',
             method: 'POST',
             data: _data
         }).success(function (product) {
+            console.log(product);
             $("#cart_count").text(product.length);
             user_shoplist = product.slice();
             var trHTML = '';
@@ -327,6 +418,7 @@ $(document).ready(function(){
             });
             $("#cart_table").html(trHTML);
             $('#totalcost_spn').text(totalcost);
+
         }).error(function () {
             
         })
@@ -335,14 +427,12 @@ $(document).ready(function(){
             // console.log($(this).closest('tr').find('td:last').text());
             var index = $(this).closest('tr').find('td:last').text();
             _data.good_id = user_shoplist[$(this).closest('tr').find('td:last').text()].good_id;
-            // console.log(_data.good_id);
             $.ajax({
                 url:'/delete_cart',
                 method:'POST',
                 data: _data
             }).success(function(result){
                 if(result == "ok"){
-                    // toastr.success("سبد به روز رسانی شد.");
                     var count = $("#cart_count").text();
                     count--;
                     $("#cart_count").text(count);
@@ -376,13 +466,21 @@ $(document).ready(function(){
                 totalcost = totalcost - temp;
             });
         }).on('keyup','tr td :input:contains()',function (e) {
+            var goods_count = user_shoplist[$(this).closest('tr').find('td:last').text()].count;
+            console.log(goods_count);
             let temp;
             $(this).closest('tr').find("input").each(function() {
                 if(this.value < 1 || this.value == ''){
                     this.value = 1;
                 }
-                if(this.value > 5){
+                else if(this.value > 5 && this.value < goods_count){
                     this.value = 5;
+                }
+                else if(this.value <= 5 && this.value > goods_count){
+                    this.value = goods_count;
+                }
+                else if(this.value > 5 && this.value > goods_count){
+                    this.value = goods_count;
                 }
                 quantity = this.value;
                 user_shoplist[$(this).closest('tr').find('td:last').text()].qty = quantity;
@@ -392,27 +490,33 @@ $(document).ready(function(){
             });
         });
         $('#payment_btn').unbind().click(function () {
-            var _data = user_shoplist.reduce(function(o, v, i) {
-                o[i] = v;
-                return o;
-            }, {});
-            _data.user_id = $("#cart_user_id").val();
-            // console.log(user_shoplist.length);
-            if(user_shoplist.length != 0){
-                $.ajax({
-                    url: '/payment',
-                    method: 'POST',
-                    data: _data
-                }).success(function (result) {
-                    if(result == 'ok'){
-                        toastr.success("خرید با موفقیت انجام شد.");
-                        $("#cart_count").text(0);
-                        $('#cart_table').html("");
-                        $('#totalcost_spn').text('');
-                    }
-                }).error(function () {
+            if(parseInt($('#credit_amount_spn').text()) >= parseInt($('#totalcost_spn').text())){
+                var _data = user_shoplist.reduce(function(o, v, i) {
+                    o[i] = v;
+                    return o;
+                }, {});
+                _data.user_id = $("#cart_user_id").val();
+                _data.credit = parseInt($('#credit_amount_spn').text()) - parseInt($('#totalcost_spn').text());
+                // console.log(_data);
+                if(user_shoplist.length != 0){
+                    $.ajax({
+                        url: '/payment',
+                        method: 'POST',
+                        data: _data
+                    }).success(function (result) {
+                        if(result == 'ok'){
+                            toastr.success("خرید با موفقیت انجام شد.");
+                            $("#cart_count").text(0);
+                            $('#cart_table').html("");
+                            $('#totalcost_spn').text('');
+                            $('#credit_amount_spn').text(parseInt($('#credit_amount_spn').text()) - parseInt($('#totalcost_spn').text()));
+                        }
+                    }).error(function () {
 
-                })
+                    })
+                }
+            }else{
+                toastr.error("عدم اعتبار کافی!");
             }
         });
     });
@@ -469,6 +573,8 @@ $(document).ready(function(){
             var to_date = $('#to_date').val();
             _data.from_date = Date.parse(from_date);
             _data.to_date = Date.parse(to_date);
+            _data._type = $('#type_select').val();
+            // console.log(_data);
             _data.chart_num = 1;
             $.ajax({
                 url:'/chart',
@@ -509,6 +615,7 @@ $(document).ready(function(){
             var to_date = $('#to_date').val();
             _data.from_date = Date.parse(from_date);
             _data.to_date = Date.parse(to_date);
+            _data._type = $('#type_select').val();
             _data.chart_num = 1;
             $.ajax({
                 url:'/chart',
@@ -554,6 +661,7 @@ $(document).ready(function(){
             var to_date = $('#to_date').val();
             _data.from_date = Date.parse(from_date);
             _data.to_date = Date.parse(to_date);
+            _data._type = $('#type_select').val();
             _data.chart_num = 2;
             $.ajax({
                 url:'/chart',
@@ -594,6 +702,7 @@ $(document).ready(function(){
             var to_date = $('#to_date').val();
             _data.from_date = Date.parse(from_date);
             _data.to_date = Date.parse(to_date);
+            _data._type = $('#type_select').val();
             _data.chart_num = 2;
             $.ajax({
                 url:'/chart',
@@ -639,6 +748,7 @@ $(document).ready(function(){
             var to_date = $('#to_date').val();
             _data.from_date = Date.parse(from_date);
             _data.to_date = Date.parse(to_date);
+            _data._type = $('#type_select').val();
             _data.chart_num = 3;
             $.ajax({
                 url:'/chart',
@@ -674,11 +784,12 @@ $(document).ready(function(){
                 }
             });
         });
-        $('#draw_line').click(function () {
+        $('#draw_line').click(function ()   {
             var from_date = $('#from_date').val();
             var to_date = $('#to_date').val();
             _data.from_date = Date.parse(from_date);
             _data.to_date = Date.parse(to_date);
+            _data._type = $('#type_select').val();
             _data.chart_num = 3;
             $.ajax({
                 url:'/chart',

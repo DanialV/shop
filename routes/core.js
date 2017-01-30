@@ -3,7 +3,7 @@
  */
 var express = require('express');
 var db = require("./mongoschema");
-var multer = require('multer')
+var multer = require('multer');
 var upload = multer({
     dest: './public/goods_data/'
 })
@@ -15,55 +15,112 @@ module.exports = function(app) {
     app.route('/chart').post(function(req, res) {
         var data = req.body;
         if(data.chart_num == 1){
-            db.goods.aggregate([
-                { $match: { time: { $gte: parseInt(data.from_date), $lte: parseInt(data.to_date) } }},
-                {$group: {
-                    _id: "$brand",
-                    totalAmount: {
-                        $sum: "$count"
+            if(data._type != 'تمام محصولات'){
+                db.goods.aggregate([
+                    { $match: { time: { $gte: parseInt(data.from_date), $lte: parseInt(data.to_date) }, category: data._type }},
+                    {$group: {
+                        _id: '$brand',
+                        totalAmount: {
+                            $sum: "$count"
+                        }
                     }
-                }
-            }], function(err, info) {
-                if (err) {
+                    }], function(err, info) {
+                    if (err) {
 
-                } else {
-                    res.json(info)
-                }
-            });
+                    } else {
+                        res.json(info)
+                    }
+                });
+            }
+            else{
+                db.goods.aggregate([
+                    { $match: { time: { $gte: parseInt(data.from_date), $lte: parseInt(data.to_date) } }},
+                    {$group: {
+                        _id: '$brand',
+                        totalAmount: {
+                            $sum: "$count"
+                        }
+                    }
+                    }], function(err, info) {
+                    if (err) {
+
+                    } else {
+                        res.json(info)
+                    }
+                });
+            }
         }
         else if(data.chart_num == 2){
-            db.goods.aggregate([
-                { $match: { time: { $gte: parseInt(data.from_date), $lte: parseInt(data.to_date) } }},
-                {$group: {
-                    _id: "$brand",
-                    totalAmount: {
-                        $sum: { $multiply: [ "$price", "$count" ] }
+            if(data._type != 'تمام محصولات'){
+                db.goods.aggregate([
+                    { $match: { time: { $gte: parseInt(data.from_date), $lte: parseInt(data.to_date) }, category: data._type }},
+                    {$group: {
+                        _id: "$brand",
+                        totalAmount: {
+                            $sum: { $multiply: [ "$price", "$count" ] }
+                        }
                     }
-                }
-            }], function(err, info) {
-                if (err) {
+                    }], function(err, info) {
+                    if (err) {
 
-                } else {
-                    res.json(info)
-                }
-            });
+                    } else {
+                        res.json(info)
+                    }
+                });
+            }
+            else{
+                db.goods.aggregate([
+                    { $match: { time: { $gte: parseInt(data.from_date), $lte: parseInt(data.to_date) } }},
+                    {$group: {
+                        _id: "$brand",
+                        totalAmount: {
+                            $sum: { $multiply: [ "$price", "$count" ] }
+                        }
+                    }
+                }], function(err, info) {
+                    if (err) {
+
+                    } else {
+                        res.json(info)
+                    }
+                });
+            }
         }
         else if(data.chart_num == 3){
-            db.goods.aggregate([
-                { $match: { time: { $gte: parseInt(data.from_date), $lte: parseInt(data.to_date) } }},
-                {$group: {
-                    _id: "$brand",
-                    totalAmount: {
-                        $sum: "$sales_count"
+            if(data._type != 'تمام محصولات'){
+                db.goods.aggregate([
+                    { $match: { time: { $gte: parseInt(data.from_date), $lte: parseInt(data.to_date) }, category: data._type }},
+                    {$group: {
+                            _id: "$brand",
+                            totalAmount: {
+                            $sum: "$sales_count"
+                        }
                     }
-                }
-            }], function(err, info) {
-                if (err) {
+                    }], function(err, info) {
+                    if (err) {
 
-                } else {
-                    res.json(info)
+                    } else {
+                        res.json(info)
+                    }
+                });
+            }
+            else{
+                db.goods.aggregate([
+                    { $match: { time: { $gte: parseInt(data.from_date), $lte: parseInt(data.to_date) } }},
+                    {$group: {
+                        _id: "$brand",
+                        totalAmount: {
+                            $sum: "$sales_count"
+                        }
+                    }
+                    }], function(err, info) {
+                        if (err) {
+
+                        } else {
+                            res.json(info)
+                        }
+                    });
                 }
-            });
         }
     });
     app.route('/').get(function(req, res) {
@@ -73,7 +130,6 @@ module.exports = function(app) {
             if (err) {
 
             } else {
-                // console.log(info);
                 if (typeof req.session.role == 'undefined') {
                     var _data = {};
                     _data.sess = 0;
@@ -85,7 +141,6 @@ module.exports = function(app) {
                     var _data = {};
                     _data.sess = req.session;
                     _data['goods_data'] = info;
-                    // console.log(_data);
                     res.render('index', {
                         data: _data
                     });
@@ -94,34 +149,82 @@ module.exports = function(app) {
         });
     });
 
+    var uniq_username = true;
+    var login_validation;
+    var admin_validation;
     app.route('/login').post(function(req, res) {
+        login_validation = true;
+        admin_validation = true;
         var data = req.body;
         var _username = data.username;
         db.users.findOne({
             username: _username
         }, {}).lean().exec(function(err, result) {
-            if (err) {} else {
+            if (err) {
+
+            } else {
                 if (result != null) {
                     if (result.password == data.password) {
-                        req.session.first_name = result.first_name;
-                        req.session.last_name = result.last_name;
-                        req.session.username = result.username;
-                        req.session.password = result.password;
-                        req.session.number = result.number;
-                        req.session.email = result.email;
-                        req.session.address = result.address;
-                        req.session.role = result.role;
-                        req.session._id = result._id;
-                        req.session.name = result.first_name + " " + result.last_name;
-                        req.session.count = result.shop_list.length;
-                        res.redirect('/');
-
+                        if(result.validation){
+                            req.session.first_name = result.first_name;
+                            req.session.last_name = result.last_name;
+                            req.session.username = result.username;
+                            req.session.password = result.password;
+                            req.session.number = result.number;
+                            req.session.email = result.email;
+                            req.session.address = result.address;
+                            req.session.role = result.role;
+                            req.session._id = result._id;
+                            req.session.name = result.first_name + " " + result.last_name;
+                            req.session.count = result.shop_list.length;
+                            res.redirect('/');
+                        }else{
+                            admin_validation = false;
+                            res.redirect('/login_msg');
+                        }
                     } else {
-                        // console.log(data);
-                        // console.log(result);
+                        login_validation = false;
+                        res.redirect('/login_msg');
                     }
                 } else {
-                    // console.log(result)
+                    login_validation = false;
+                    res.redirect('/login_msg');
+                }
+            }
+        });
+    });
+    app.route('/login_msg').get(function (req, res) {
+        db.goods.find({}).sort({
+            $natural: -1
+        }).limit(9).lean().exec(function(err, info) {
+            if (err) {
+
+            } else {
+                if(login_validation){
+                    if(admin_validation){
+                        var _data = {};
+                        _data.sess = req.session;
+                        _data['goods_data'] = info;
+                        res.render('index', {
+                            data: _data
+                        });
+                    }else{
+                        var _data = {};
+                        _data.enroll_res = "حساب شما هنوز تایید نشده!";
+                        _data.sess = 0;
+                        _data['goods_data'] = info;
+                        res.render('index', {
+                            data: _data
+                        });
+                    }
+                }else{
+                    var _data = {};
+                    _data.enroll_res = "نام کاربری یا کلمه عبور اشتباه است!";
+                    _data.sess = 0;
+                    _data['goods_data'] = info;
+                    res.render('index', {
+                        data: _data
+                    });
                 }
             }
         });
@@ -131,6 +234,8 @@ module.exports = function(app) {
         data.shop_list = [];
         data.shopped_list = [];
         data.role = 1;
+        data.credit = "5000000";
+        data.validation = false;
         db.users.findOne({
             username: data.username
         }, {}).lean().exec(function(err, resualt) {
@@ -143,21 +248,42 @@ module.exports = function(app) {
                         if (err) {
 
                         } else {
-                            req.session.name = data.first_name + " " + data.last_name;
-                            var _data = {};
-                            _data.sess = req.session
-                            _data.enroll_res = "ثبت نام با موفقیت انجام شد!";
-                            res.render("index", {
-                                data: _data
-                            });
+                            res.redirect('/enroll_msg');
                         }
                     })
                 } else {
-                    //errorr for uniqe username
+                    uniq_username = false;
+                    res.redirect('/enroll_msg');
                 }
             }
         })
 
+    });
+    app.route('/enroll_msg').get(function (req, res) {
+        db.goods.find({}).sort({
+            $natural: -1
+        }).limit(9).lean().exec(function(err, info) {
+            if (err) {
+
+            } else {
+                var _data = {};
+                if(uniq_username){
+                    _data.enroll_res = "ثبت نام با موفقیت انجام شد. منتظر تایید مدیر باشید!";
+                    _data.sess = 0;
+                    _data['goods_data'] = info;
+                    res.render('index', {
+                        data: _data
+                    });
+                }else{
+                    _data.enroll_res = "نام کاربری تکراری می باشد!";
+                    _data.sess = 0;
+                    _data['goods_data'] = info;
+                    res.render('index', {
+                        data: _data
+                    });
+                }
+            }
+        });
     });
     app.route("/logout").get(function(req, res) {
         req.session = null;
@@ -326,6 +452,7 @@ module.exports = function(app) {
                 result.number = data.number;
                 result.email = data.email;
                 result.address = data.address;
+                result.credit = data.credit;
                 result.save(function(err) {
                     if (err) {
 
@@ -334,6 +461,19 @@ module.exports = function(app) {
                     }
                 })
             }
+        });
+    });
+    app.route('/user_valid_admin').post(function (req, res) {
+        var data = req.body;
+        db.users.findOne({_id: data._id}, {},function (err, result) {
+            result.validation = data.valid;
+            result.save(function (err) {
+                if (err) {
+
+                } else {
+                    res.send('ok');
+                }
+            })
         });
     });
     app.route('/user_edit').post(function(req, res) {
@@ -508,6 +648,7 @@ module.exports = function(app) {
                             cart_object.price = g_result.price;
                             cart_object.user_id = result.user_id;
                             cart_object.good_id = g_result._id;
+                            cart_object.count = g_result.count;
                             cart_object.qty = 1;
                             arr.push(cart_object);
                             temp++;
@@ -548,22 +689,35 @@ module.exports = function(app) {
         });
     });
 
+    app.route('/credit').post(function (req, res) {
+        var data = req.body;
+        db.users.findOne({_id: data.user_id},{}).lean().exec( function (err, result) {
+            if(err){
+
+            }else{
+                var data = result.credit;
+                res.send(data);
+            }
+        });
+    });
     app.route('/payment').post(function(req, res) {
         var g_i_index = 2;
         var count = 0;
         var cnt = 0;
         var data = req.body;
+        // console.log(data);
         Object.keys(data).forEach(function(value, index) {
             if (cnt == g_i_index) {
                 db.goods.findOne({
                     _id: data[value]
                 }, {}, function(err, result) {
+                    // console.log(result);
                     if (err) {
 
                     } else {
-                        count = parseInt(result.count) - parseInt(data[Object.keys(data)[index + 1]]);
+                        count = result.count - parseInt(data[Object.keys(data)[index + 2]]);
                         result.count = count;
-                        result.sales_count += parseInt(data[Object.keys(data)[index + 1]]);
+                        result.sales_count += parseInt(data[Object.keys(data)[index + 2]]);
                         result.save(function(err) {
                             if (err) {
 
@@ -585,6 +739,7 @@ module.exports = function(app) {
             } else {
                 result.shopped_list.push(result.shop_list);
                 result.shop_list = [];
+                result.credit = data.credit;
                 result.save(function(err) {
                     if (err) {
 

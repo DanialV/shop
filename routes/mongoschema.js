@@ -16,7 +16,9 @@ var users_schema = Schema({
     number:String,
     shop_list:Array,
     shopped_list: Array,
-    role: Number
+    role: Number,
+    credit: String,
+    validation: Boolean
 });
 var goods = Schema({
     title:String,
