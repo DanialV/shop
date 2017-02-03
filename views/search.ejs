@@ -18,108 +18,83 @@
         <script src="ism/js/ism-2.2.min.js"></script>
     </head>
     <body>
-        <% if(typeof data.enroll_res != 'undefined'){%>
-            <div id="alert">
-                <a class="alert" href="#alert" style="top:10px"><%=data.enroll_res%></a>
-            </div>
-            <%data.enroll_res = undefined%>
-        <%}%>
-            <div class="container-fluid bg-1">
-                <div class="container bg-2">
-                    <div class="header">
-                        <div class="search-box text-center">
-                            <form class="form-inline" id="search_frm" action="/search" method="post">
-                                <fieldset>
-                                    <button class="btn btn-primary" id="search_btn" type="submit">
-                                        <a href="">
-                                        </a>
-                                        <span class="glyphicon glyphicon-search"></span>
-                                    </button>
-                                    <div class="form-group">
-                                        <input class="text-center form-control" id="search_input" name="search_input" type="text" value="<%= data.goods_data.search_input %> " />
-                                    </div>
-                                </fieldset>
-                            </form>
-                        </div>
-                        <%if(data.role != 0){%>
-                            <div dir="rtl">
-                                <span> کاربر گرامی : <p style="color: red; display: inline"><%= data.name %></p> خوش آمدید! </span>
+    <div class="container-fluid bg-1">
+        <div class="container bg-2">
+            <div class="header">
+                <div class="search-box text-center">
+                    <form class="form-inline" id="search_frm" action="/search" method="post">
+                        <fieldset>
+                            <button class="btn btn-primary" id="search_btn" type="submit">
+                                <a href="">
+                                </a>
+                                <span class="glyphicon glyphicon-search"></span>
+                            </button>
+                            <div class="form-group">
+                                <input class="text-center form-control" id="search_input" name="search_input" type="text" value="<%= data.goods_data.search_input %> " />
                             </div>
-                        <%}%>
-                        <nav class="navbar navbar-inverse">
-                            <div class="navbar-header">
-                                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-                                    <span class="icon-bar"></span>
-                                    <span class="icon-bar"></span>
-                                    <span class="icon-bar"></span>
-                                </button>
-                            </div>
-                            <div class="container-fluid collapse navbar-collapse" id="myNavbar">
-                                <ul class="nav navbar-nav navbar-right" id="home">
-                                    <li class="active"><a href="/">صفحه اصلی</a></li>
-                                </ul>
-
-                                <%if(data.role == 2){%>
-                                <!--<ul class="nav navbar-nav navbar-right" id="product">-->
-                                    <!--<li class="dropdown">-->
-                                        <!--<a class="dropdown-toggle" data-toggle="dropdown" href="#">‍‍‍‍‍‍‍ پنل مدیریت<span class="caret"></span></a>-->
-                                        <!--<ul class="dropdown-menu navbar-inverse">-->
-                                            <!--<li><a class="text-right" href="#user_management_pop" data-toggle="modal">مدیریت کاربران</a></li>-->
-                                            <!--<li><a class="text-right" data-dismiss="modal" data-toggle="modal" href="#goods_management_pop">مدیریت انبار</a></li>-->
-                                            <!--<li><a class="text-right" data-dismiss="modal" data-toggle="modal" href="#report_management_pop">گزارش گیری</a></li>-->
-                                        <!--</ul>-->
-                                    <!--</li>-->
-                                <!--</ul>-->
-                                <%}%>
-
-                                <ul class="nav navbar-nav navbar-right" id="product">
-                                    <li class="dropdown">
-                                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">محصولات<span class="caret"></span></a>
-                                        <ul class="dropdown-menu navbar-inverse">
-                                            <li><a class="text-right" href="/apple">اپل</a></li>
-                                            <li><a class="text-right" href="/samsung">سامسونگ</a></li>
-                                            <li><a class="text-right" href="/lg">الجی</a></li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                                <ul class="nav navbar-nav navbar-right" id="about">
-                                    <li><a href="/about">درباره ما</a></li>
-                                </ul>
-                                <ul class="nav navbar-nav navbar-right" id="question">
-                                    <li><a href="#">سوالات متداول</a></li>
-                                </ul>
-                                <ul class="nav navbar-nav navbar-right" id="contact">
-                                    <li><a href="#">تماس با ما</a></li>
-                                </ul>
-                                <%if(data.role == 0){%>
-                                <ul class="nav navbar-nav">
-                                    <li><a href="#login_pop" data-toggle="modal"><span class="glyphicon glyphicon-user"></span>حساب کاربری</a></li>
-                                </ul>
-                                <%}%>
-                                <%if(data.role == 1){%>
-                                <ul class="nav navbar-nav navbar-right" id="edit">
-                                    <li><a href="#user_edit_pop" data-dismiss="modal" data-toggle="modal">ویرایش اطلاعات</a></li>
-                                </ul>
-                                <%}%>
-                                <%if(data.role != 0){%>
-                                <ul class="nav navbar-nav navbar-right" id="exit">
-                                    <li><a href="/logout">خروج</a></li>
-                                </ul>
-                                <%}%>
-                                <%if(data.role == 1){%>
-                                <ul class="nav navbar-nav pull-left">
-                                    <li><a href="#shoping_cart_pop" data-toggle="modal" data-dismiss="modal" id="cart-btn"><i class="glyphicon glyphicon-shopping-cart"></i>
-                                            سبد خرید
-                                            <input class="hidden" id="cart_user_id" value="<%=data._id%>">
-                                            <span id="cart_count"><%=data.count%></span>
-                                        </a>
-                                    </li>
-                                </ul>
-                                <%}%>
-                            </div>
-                        </nav>
+                        </fieldset>
+                    </form>
+                </div>
+                <%if(data.sess != 0){%>
+                <div dir="rtl">
+                    <span> کاربر گرامی : <p style="color: red; display: inline"><%= data.sess.name %></p> خوش آمدید! </span>
+                </div>
+                <%}%>
+                <nav class="navbar navbar-inverse">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
                     </div>
-             <!--////////////Modal Segment//////////-->
+                    <div class="container-fluid collapse navbar-collapse" id="myNavbar">
+                        <ul class="nav navbar-nav navbar-right" id="home">
+                            <li class="active"><a href="/">صفحه اصلی</a></li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right" id="product">
+                            <li class="dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">محصولات<span class="caret"></span></a>
+                                <ul class="dropdown-menu navbar-inverse">
+                                    <li><a class="text-right" href="/apple">اپل</a></li>
+                                    <li><a class="text-right" href="/samsung">سامسونگ</a></li>
+                                    <li><a class="text-right" href="/lg">الجی</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right" id="about">
+                            <li><a href="/about">درباره ما</a></li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right" id="question">
+                            <li><a href="#">سوالات متداول</a></li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right" id="contact">
+                            <li><a href="#">تماس با ما</a></li>
+                        </ul>
+                        <%if(data.sess == 0){%>
+                        <ul class="nav navbar-nav">
+                            <li><a href="#login_pop" data-toggle="modal"><span class="glyphicon glyphicon-user"></span>حساب کاربری</a></li>
+                        </ul>
+                        <%}%>
+                        <%if(data.sess != 0){%>
+                        <ul class="nav navbar-nav navbar-right" id="exit">
+                            <li><a href="/logout">خروج</a></li>
+                        </ul>
+                        <%}%>
+                        <%if(data.sess.role == 1){%>
+                        <ul class="nav navbar-nav pull-left">
+                            <li><a href="#shoping_cart_pop" data-toggle="modal" data-dismiss="modal" id="cart-btn"><i class="glyphicon glyphicon-shopping-cart"></i>
+                                    سبد خرید
+                                    <input class="hidden" id="cart_user_id" value="<%=data.sess._id%>">
+                                    <span id="cart_count"><%=data.sess.count%></span>
+                                </a>
+                            </li>
+                        </ul>
+                        <%}%>
+                    </div>
+                </nav>
+            </div>
+            <!--////////////Modal Segment//////////-->
 
             <!-- signin Modal -->
             <div class="modal fade" id="login_pop" role="dialog">
@@ -194,44 +169,6 @@
 
                     </div>
                 </div>
-            </div>
-
-            <!-- User_Edit Modal -->
-            <div class="modal fade" id="user_edit_pop" role="dialog">
-                <div class="modal-dialog">
-
-                    <!-- Modal content-->
-                    <div class="modal-content">
-                        <div class="modal-header" style="padding:15px 220px;">
-                            <h4 dir="rtl"><span class="glyphicon glyphicon-user"></span>ویرایش اطلاعات</h4>
-                        </div>
-                        <div class="modal-body" style="padding:10px 50px;">
-                            <form action="/user_edit" method="post">
-                                <div dir="rtl" class="form-group">
-                                    <input type="text"  name="first_name" placeholder="نام" value="<%=data.first_name%>">
-                                    <input type="text" class="pull-left" name="last_name" placeholder="نام خانوادگی" value="<%= data.last_name%>">
-                                </div>
-                                <div dir="rtl" class="form-group">
-                                    <input type="text"  name="username" placeholder="نام کاربری" value="<%= data.username %>" readonly>
-                                    <input type="password" class="pull-left" name="password" placeholder="کلمه عبور" value="<%= data.password%>">
-                                </div>
-                                <div dir="rtl" class="form-group">
-                                    <input  type="text"  name="number" placeholder="شماره تماس" value="<%= data.number%>">
-                                    <input dir="ltr" type="text" class="pull-left" name="email" placeholder="ایمیل" value="<%= data.email%>">
-                                </div>
-                                <div style="padding: 0px 0px 10px;">
-                                    <input dir="rtl" class="form-control" type="text" name="address" placeholder="آدرس" value="<%= data.address%>">
-                                </div>
-                                <button type="submit" class="btn btn-success btn-block"><span class="glyphicon glyphicon-saved"></span>ذخیره</button>
-                            </form>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-danger btn-default max-width" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> بستن</button>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
             </div>
 
             <!-- User_ Management Modal-->
@@ -646,7 +583,7 @@
                 </tr>
                 </thead>
                 <tbody id="search_result_table_body" style="height: 500px;">
-                <input class="hidden" id="inp_user_id" value="<%= data._id %>"/>
+                <input class="hidden" id="inp_user_id" value="<%= data.sess._id %>"/>
                     <%for(var index=0 ; index < data.goods_data.length ; index++){%>
                         <tr>
                             <td>

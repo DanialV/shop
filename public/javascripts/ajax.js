@@ -2,6 +2,71 @@
  * Created by esi on 11/28/16.
  */
 $(document).ready(function(){
+    function getRandomColor() {
+        var letters = '0123456789ABCDEF';
+        var color = '#';
+        for (var i = 0; i < 6; i++ ) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+    function getchart(chart_type) {
+        switch (chart_type){
+            case 'count':
+                return 1
+            break;
+            case 'value':
+                return 2
+            break;
+            case 'sale':
+                return 3
+            break;
+            default:
+                return 1
+        }
+    }
+    function getcategory(cat_type) {
+        return cat_type;
+    }
+    function drawchart(data,shape,_title) {
+        var chart_data = [];
+        var each_data = [];
+        each_data.push('Brand');
+        each_data.push('تعداد');
+        each_data.push( { role: 'style' } );
+        chart_data.push(each_data);
+        data.forEach(function(index){
+            each_data = [];
+            each_data.push(index._id);
+            each_data.push(index.totalAmount);
+            each_data.push('color: '+getRandomColor());
+            chart_data.push(each_data);
+        });
+        if(shape == 'pie'){
+            function drawChart() {
+                var data = google.visualization.arrayToDataTable(chart_data);
+                var options = {
+                    title: _title
+                };
+                var chart = new google.visualization.PieChart(document.getElementById('chart'));
+                chart.draw(data, options);
+            }
+            google.charts.load('current', {'packages':['corechart']});
+            google.charts.setOnLoadCallback(drawChart);
+        }else{
+            function drawBasic() {
+                var data = google.visualization.arrayToDataTable(chart_data);
+                var options = {
+                    title: _title
+                };
+
+                var chart = new google.visualization.ColumnChart(document.getElementById('chart'));
+                chart.draw(data, options);
+            }
+            google.charts.load('current', {packages: ['corechart', 'bar']});
+            google.charts.setOnLoadCallback(drawBasic);
+        }
+    }
     toastr.options = {
         "closeButton": true,
         "debug": false,
@@ -199,15 +264,15 @@ $(document).ready(function(){
             users_table_data = users;
             var trHTML = '';
             $.each(users, function (i, item) {
-                trHTML += '<tr><td class="col-sm-2">' + item.first_name + '</td><td class="col-sm-2">' + item.last_name + '</td><td>' + item.username + '</td>';
+                trHTML += '<tr><td class="col-sm-2">' + item.first_name + '</td><td class="col-sm-2">' + item.last_name + '</td><td style="width: 270px;">' + item.username + '</td>';
                 if(item.role == 2){
-                    trHTML += '<div><td><button class="btn btn-primary btn-sm" type="button" data-toggle="modal" data-target="#user_edit_management_pop">ویرایش</button></td><td><button class="btn btn-danger btn-sm" type="button" disabled>حذف</button></td><td><button class="btn btn-success btn-sm glyphicon glyphicon-ok" id="valid_btn"  type="button" disabled></button></td></div><td class="hidden">'+i+'</td></tr>';
+                    trHTML += '<div><td style="width: 70px;"><button class="btn btn-primary btn-sm" type="button" data-toggle="modal" data-target="#user_edit_management_pop">ویرایش</button></td><td style="width: 80px;"><button class="btn btn-danger btn-sm" type="button" disabled>حذف</button></td><td><button class="btn btn-success btn-sm glyphicon glyphicon-ok" id="valid_btn" type="button" disabled></button></td></div><td class="hidden">'+i+'</td></tr>';
                 }else{
-                    trHTML += '<div><td><button class="btn btn-primary btn-sm" type="button" data-toggle="modal" data-target="#user_edit_management_pop">ویرایش</button></td><td><button class="btn btn-danger btn-sm" type="button">حذف</button></td>';
+                    trHTML += '<div><td style="width: 70px;"><button class="btn btn-primary btn-sm" type="button" data-toggle="modal" data-target="#user_edit_management_pop">ویرایش</button></td><td style="width: 80px;"><button class="btn btn-danger btn-sm" type="button">حذف</button></td>';
                     if(item.validation == true){
-                        trHTML += '<td><button class="btn btn-success btn-sm glyphicon glyphicon-ok" id="valid_btn"  type="button" disabled></button></td></div><td class="hidden">'+i+'</td></tr>';
+                        trHTML += '<td><button class="btn btn-success btn-sm glyphicon glyphicon-ok btn-style" id="valid_btn" type="button" disabled></button></td></div><td class="hidden">'+i+'</td></tr>';
                     }else{
-                        trHTML += '<td><button class="btn btn-success btn-sm" id="valid_btn"  type="button" value="تایید">تایید</button></td></div><td class="hidden">'+i+'</td></tr>';
+                        trHTML += '<td><button class="btn btn-success btn-sm btn-style" id="valid_btn"  type="button">تایید</button></td></div><td class="hidden">'+i+'</td></tr>';
                     }
                 }
             });
@@ -228,15 +293,15 @@ $(document).ready(function(){
                 users_table_data.splice(index,1);
                 var trHTML = '';
                 $.each(users, function (i, item) {
-                    trHTML += '<tr><td class="col-sm-2">' + item.first_name + '</td><td class="col-sm-2">' + item.last_name + '</td><td>' + item.username + '</td>';
+                    trHTML += '<tr><td class="col-sm-2">' + item.first_name + '</td><td class="col-sm-2">' + item.last_name + '</td><td style="width: 270px;">' + item.username + '</td>';
                     if(item.role == 2){
-                        trHTML += '<div><td><button class="btn btn-primary btn-sm" type="button" data-toggle="modal" data-target="#user_edit_management_pop">ویرایش</button></td><td><button class="btn btn-danger btn-sm" type="button" disabled>حذف</button></td><td><button class="btn btn-success btn-sm glyphicon glyphicon-ok" id="valid_btn"  type="button" disabled></button></td></div><td class="hidden">'+i+'</td></tr>';
+                        trHTML += '<div><td style="width: 70px;"><button class="btn btn-primary btn-sm" type="button" data-toggle="modal" data-target="#user_edit_management_pop">ویرایش</button></td><td style="width: 80px;"><button class="btn btn-danger btn-sm" type="button" disabled>حذف</button></td><td><button class="btn btn-success btn-sm glyphicon glyphicon-ok" id="valid_btn" type="button" disabled></button></td></div><td class="hidden">'+i+'</td></tr>';
                     }else{
-                        trHTML += '<div><td><button class="btn btn-primary btn-sm" type="button" data-toggle="modal" data-target="#user_edit_management_pop">ویرایش</button></td><td><button class="btn btn-danger btn-sm" type="button">حذف</button></td>';
+                        trHTML += '<div><td style="width: 70px;"><button class="btn btn-primary btn-sm" type="button" data-toggle="modal" data-target="#user_edit_management_pop">ویرایش</button></td><td style="width: 80px;"><button class="btn btn-danger btn-sm" type="button">حذف</button></td>';
                         if(item.validation == true){
-                            trHTML += '<td><button class="btn btn-success btn-sm glyphicon glyphicon-ok" id="valid_btn"  type="button" disabled></button></td></div><td class="hidden">'+i+'</td></tr>';
+                            trHTML += '<td><button class="btn btn-success btn-sm glyphicon glyphicon-ok btn-style" id="valid_btn" type="button" disabled></button></td></div><td class="hidden">'+i+'</td></tr>';
                         }else{
-                            trHTML += '<td><button class="btn btn-success btn-sm" id="valid_btn"  type="button" value="تایید">تایید</button></td></div><td class="hidden">'+i+'</td></tr>';
+                            trHTML += '<td><button class="btn btn-success btn-sm btn-style" id="valid_btn"  type="button">تایید</button></td></div><td class="hidden">'+i+'</td></tr>';
                         }
                     }
                 });
@@ -295,15 +360,15 @@ $(document).ready(function(){
                     users_table_data = users;
                     var trHTML = '';
                     $.each(users, function (i, item) {
-                        trHTML += '<tr><td class="col-sm-2">' + item.first_name + '</td><td class="col-sm-2">' + item.last_name + '</td><td>' + item.username + '</td>';
+                        trHTML += '<tr><td class="col-sm-2">' + item.first_name + '</td><td class="col-sm-2">' + item.last_name + '</td><td style="width: 270px;">' + item.username + '</td>';
                         if(item.role == 2){
-                            trHTML += '<div><td><button class="btn btn-primary btn-sm" type="button" data-toggle="modal" data-target="#user_edit_management_pop">ویرایش</button></td><td><button class="btn btn-danger btn-sm" type="button" disabled>حذف</button></td><td><button class="btn btn-success btn-sm glyphicon glyphicon-ok" id="valid_btn"  type="button" disabled></button></td></div><td class="hidden">'+i+'</td></tr>';
+                            trHTML += '<div><td style="width: 70px;"><button class="btn btn-primary btn-sm" type="button" data-toggle="modal" data-target="#user_edit_management_pop">ویرایش</button></td><td style="width: 80px;"><button class="btn btn-danger btn-sm" type="button" disabled>حذف</button></td><td><button class="btn btn-success btn-sm glyphicon glyphicon-ok" id="valid_btn" type="button" disabled></button></td></div><td class="hidden">'+i+'</td></tr>';
                         }else{
-                            trHTML += '<div><td><button class="btn btn-primary btn-sm" type="button" data-toggle="modal" data-target="#user_edit_management_pop">ویرایش</button></td><td><button class="btn btn-danger btn-sm" type="button">حذف</button></td>';
+                            trHTML += '<div><td style="width: 70px;"><button class="btn btn-primary btn-sm" type="button" data-toggle="modal" data-target="#user_edit_management_pop">ویرایش</button></td><td style="width: 80px;"><button class="btn btn-danger btn-sm" type="button">حذف</button></td>';
                             if(item.validation == true){
-                                trHTML += '<td><button class="btn btn-success btn-sm glyphicon glyphicon-ok" id="valid_btn"  type="button" disabled></button></td></div><td class="hidden">'+i+'</td></tr>';
+                                trHTML += '<td><button class="btn btn-success btn-sm glyphicon glyphicon-ok btn-style" id="valid_btn" type="button" disabled></button></td></div><td class="hidden">'+i+'</td></tr>';
                             }else{
-                                trHTML += '<td><button class="btn btn-success btn-sm" id="valid_btn"  type="button" value="تایید">تایید</button></td></div><td class="hidden">'+i+'</td></tr>';
+                                trHTML += '<td><button class="btn btn-success btn-sm btn-style" id="valid_btn"  type="button">تایید</button></td></div><td class="hidden">'+i+'</td></tr>';
                             }
                         }
                     });
@@ -333,15 +398,15 @@ $(document).ready(function(){
                         users_table_data = users;
                         var trHTML = '';
                         $.each(users, function (i, item) {
-                            trHTML += '<tr><td class="col-sm-2">' + item.first_name + '</td><td class="col-sm-2">' + item.last_name + '</td><td>' + item.username + '</td>';
+                            trHTML += '<tr><td class="col-sm-2">' + item.first_name + '</td><td class="col-sm-2">' + item.last_name + '</td><td style="width: 270px;">' + item.username + '</td>';
                             if(item.role == 2){
-                                trHTML += '<div><td><button class="btn btn-primary btn-sm" type="button" data-toggle="modal" data-target="#user_edit_management_pop">ویرایش</button></td><td><button class="btn btn-danger btn-sm" type="button" disabled>حذف</button></td><td><button class="btn btn-success btn-sm glyphicon glyphicon-ok" id="valid_btn"  type="button" disabled></button></td></div><td class="hidden">'+i+'</td></tr>';
+                                trHTML += '<div><td style="width: 70px;"><button class="btn btn-primary btn-sm" type="button" data-toggle="modal" data-target="#user_edit_management_pop">ویرایش</button></td><td style="width: 80px;"><button class="btn btn-danger btn-sm" type="button" disabled>حذف</button></td><td><button class="btn btn-success btn-sm glyphicon glyphicon-ok" id="valid_btn" type="button" disabled></button></td></div><td class="hidden">'+i+'</td></tr>';
                             }else{
-                                trHTML += '<div><td><button class="btn btn-primary btn-sm" type="button" data-toggle="modal" data-target="#user_edit_management_pop">ویرایش</button></td><td><button class="btn btn-danger btn-sm" type="button">حذف</button></td>';
+                                trHTML += '<div><td style="width: 70px;"><button class="btn btn-primary btn-sm" type="button" data-toggle="modal" data-target="#user_edit_management_pop">ویرایش</button></td><td style="width: 80px;"><button class="btn btn-danger btn-sm" type="button">حذف</button></td>';
                                 if(item.validation == true){
-                                    trHTML += '<td><button class="btn btn-success btn-sm glyphicon glyphicon-ok" id="valid_btn"  type="button" disabled></button></td></div><td class="hidden">'+i+'</td></tr>';
+                                    trHTML += '<td><button class="btn btn-success btn-sm glyphicon glyphicon-ok btn-style" id="valid_btn" type="button" disabled></button></td></div><td class="hidden">'+i+'</td></tr>';
                                 }else{
-                                    trHTML += '<td><button class="btn btn-success btn-sm" id="valid_btn"  type="button" value="تایید">تایید</button></td></div><td class="hidden">'+i+'</td></tr>';
+                                    trHTML += '<td><button class="btn btn-success btn-sm btn-style" id="valid_btn"  type="button">تایید</button></td></div><td class="hidden">'+i+'</td></tr>';
                                 }
                             }
                         });
@@ -360,7 +425,7 @@ $(document).ready(function(){
     //for adding goods to basket
     $(document).on('click', 'button', function () {
         var val = this.getAttribute("value");
-        if(val != null && val != "apple" && val != 'samsung' && val != 'lg' && val != 'تایید'){
+        if(val != null && val != "apple" && val != 'samsung' && val != 'lg'){
             var goods_id;
             goods_id = this.value;
             var _data = {};
@@ -534,7 +599,7 @@ $(document).ready(function(){
                 var tmHTML =
                     '<div class="pull-left" style="padding-bottom: 80px;">' +
                     '<a data-toggle="modal">' +
-                    '<img class="img-responsive center-block panel-size good-img" src="'+result.image_address+'" alt="Image" style="max-height: 240px">' +
+                    '<img class="img-responsive center-block panel-size good-img" src="/img/'+result._id+'" alt="Image" style="max-height: 240px">' +
                     '</a>' +
                     '</div>' +
                     '<div>' +
@@ -557,53 +622,27 @@ $(document).ready(function(){
         }
     });
 
-    function getRandomColor() {
-        var letters = '0123456789ABCDEF';
-        var color = '#';
-        for (var i = 0; i < 6; i++ ) {
-            color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
-    }
     $("#report_count").click(function(){
         $('#chart').html('');
         var _data = {};
+        var chart_type = 'count';
+        var chart_shape;
+        var chart_title;
         $('#draw_pie').click(function () {
+            chart_shape = 'pie';
+            chart_title = 'نمودار دایره ای موجودی کالاها';
             var from_date = $('#from_date').val();
             var to_date = $('#to_date').val();
             _data.from_date = Date.parse(from_date);
             _data.to_date = Date.parse(to_date);
-            _data._type = $('#type_select').val();
-            // console.log(_data);
-            _data.chart_num = 1;
+            _data._type = getcategory($('#type_select').val());
+            _data.chart_num = getchart(chart_type);
             $.ajax({
                 url:'/chart',
                 method:'POST',
                 data: _data
             }).success(function(data){
-                var chart_data = [];
-                var each_data = [];
-                each_data.push('Brand');
-                each_data.push('تعداد');
-                each_data.push( { role: 'style' } );
-                chart_data.push(each_data);
-                data.forEach(function(index){
-                    each_data = [];
-                    each_data.push(index._id);
-                    each_data.push(index.totalAmount);
-                    each_data.push('color: '+getRandomColor());
-                    chart_data.push(each_data);
-                });
-                    function drawChart() {
-                        var data = google.visualization.arrayToDataTable(chart_data);
-                        var options = {
-                            title: 'نمودار دایره ای موجودی انبار'
-                        };
-                        var chart = new google.visualization.PieChart(document.getElementById('chart'));
-                        chart.draw(data, options);
-                    }
-                    google.charts.load('current', {'packages':['corechart']});
-                    google.charts.setOnLoadCallback(drawChart);
+                drawchart(data,chart_shape,chart_title);
             }).error(function(err){
                 if(err){
                     console.log(err);
@@ -611,6 +650,8 @@ $(document).ready(function(){
             });
         });
         $('#draw_line').click(function () {
+            chart_shape = 'line';
+            chart_title = 'نمودار میله ای موجودی کالاها';
             var from_date = $('#from_date').val();
             var to_date = $('#to_date').val();
             _data.from_date = Date.parse(from_date);
@@ -622,30 +663,7 @@ $(document).ready(function(){
                 method:'POST',
                 data: _data
             }).success(function(data){
-                var chart_data = [];
-                var each_data = [];
-                each_data.push('Brand');
-                each_data.push('تعداد');
-                each_data.push( { role: 'style' } );
-                chart_data.push(each_data);
-                data.forEach(function(index){
-                    each_data = [];
-                    each_data.push(index._id);
-                    each_data.push(index.totalAmount);
-                    each_data.push('color: '+getRandomColor());
-                    chart_data.push(each_data);
-                });
-                    function drawBasic() {
-                        var data = google.visualization.arrayToDataTable(chart_data);
-                        var options = {
-                            title: 'نمودار میله ای موجودی انبار'
-                        };
-
-                        var chart = new google.visualization.ColumnChart(document.getElementById('chart'));
-                        chart.draw(data, options);
-                    }
-                    google.charts.load('current', {packages: ['corechart', 'bar']});
-                    google.charts.setOnLoadCallback(drawBasic);
+                drawchart(data,chart_shape,chart_title);
             }).error(function(err){
                 if(err){
                     console.log(err);
@@ -656,41 +674,24 @@ $(document).ready(function(){
     $("#report_value").click(function(){
         $('#chart').html('');
         var _data = {};
+        var chart_type = 'value';
+        var chart_shape;
+        var chart_title;
         $('#draw_pie').click(function () {
+            chart_shape = 'pie';
+            chart_title = 'نمودار دایره ای ارزش کالاهای موجود';
             var from_date = $('#from_date').val();
             var to_date = $('#to_date').val();
             _data.from_date = Date.parse(from_date);
             _data.to_date = Date.parse(to_date);
-            _data._type = $('#type_select').val();
-            _data.chart_num = 2;
+            _data._type = getcategory($('#type_select').val());
+            _data.chart_num = getchart(chart_type);
             $.ajax({
                 url:'/chart',
                 method:'POST',
                 data: _data
             }).success(function(data){
-                var chart_data = [];
-                var each_data = [];
-                each_data.push('Brand');
-                each_data.push('تعداد');
-                each_data.push( { role: 'style' } );
-                chart_data.push(each_data);
-                data.forEach(function(index){
-                    each_data = [];
-                    each_data.push(index._id);
-                    each_data.push(index.totalAmount);
-                    each_data.push('color: '+getRandomColor());
-                    chart_data.push(each_data);
-                });
-                function drawChart() {
-                    var data = google.visualization.arrayToDataTable(chart_data);
-                    var options = {
-                        title: 'نمودار دایره ای موجودی انبار'
-                    };
-                    var chart = new google.visualization.PieChart(document.getElementById('chart'));
-                    chart.draw(data, options);
-                }
-                google.charts.load('current', {'packages':['corechart']});
-                google.charts.setOnLoadCallback(drawChart);
+                drawchart(data,chart_shape,chart_title);
             }).error(function(err){
                 if(err){
                     console.log(err);
@@ -698,41 +699,20 @@ $(document).ready(function(){
             });
         });
         $('#draw_line').click(function () {
+            chart_shape = 'line';
+            chart_title = 'نمودار میله ای ارزش کالاهای موجود';
             var from_date = $('#from_date').val();
             var to_date = $('#to_date').val();
             _data.from_date = Date.parse(from_date);
             _data.to_date = Date.parse(to_date);
-            _data._type = $('#type_select').val();
-            _data.chart_num = 2;
+            _data._type = getcategory($('#type_select').val());
+            _data.chart_num = getchart(chart_type);
             $.ajax({
                 url:'/chart',
                 method:'POST',
                 data: _data
             }).success(function(data){
-                var chart_data = [];
-                var each_data = [];
-                each_data.push('Brand');
-                each_data.push('تعداد');
-                each_data.push( { role: 'style' } );
-                chart_data.push(each_data);
-                data.forEach(function(index){
-                    each_data = [];
-                    each_data.push(index._id);
-                    each_data.push(index.totalAmount);
-                    each_data.push('color: '+getRandomColor());
-                    chart_data.push(each_data);
-                });
-                function drawBasic() {
-                    var data = google.visualization.arrayToDataTable(chart_data);
-                    var options = {
-                        title: 'نمودار میله ای موجودی انبار'
-                    };
-
-                    var chart = new google.visualization.ColumnChart(document.getElementById('chart'));
-                    chart.draw(data, options);
-                }
-                google.charts.load('current', {packages: ['corechart', 'bar']});
-                google.charts.setOnLoadCallback(drawBasic);
+                drawchart(data,chart_shape,chart_title);
             }).error(function(err){
                 if(err){
                     console.log(err);
@@ -743,41 +723,24 @@ $(document).ready(function(){
     $("#report_sale").click(function(){
         $('#chart').html('');
         var _data = {};
+        var chart_type = 'sale';
+        var chart_shape;
+        var chart_title;
         $('#draw_pie').click(function () {
+            chart_shape = 'pie';
+            chart_title = 'نمودار دایره ای کالاهای فروخته شده';
             var from_date = $('#from_date').val();
             var to_date = $('#to_date').val();
             _data.from_date = Date.parse(from_date);
             _data.to_date = Date.parse(to_date);
-            _data._type = $('#type_select').val();
-            _data.chart_num = 3;
+            _data._type = getcategory($('#type_select').val());
+            _data.chart_num = getchart(chart_type);
             $.ajax({
                 url:'/chart',
                 method:'POST',
                 data: _data
             }).success(function(data){
-                var chart_data = [];
-                var each_data = [];
-                each_data.push('Brand');
-                each_data.push('تعداد');
-                each_data.push( { role: 'style' } );
-                chart_data.push(each_data);
-                data.forEach(function(index){
-                    each_data = [];
-                    each_data.push(index._id);
-                    each_data.push(index.totalAmount);
-                    each_data.push('color: '+getRandomColor());
-                    chart_data.push(each_data);
-                });
-                function drawChart() {
-                    var data = google.visualization.arrayToDataTable(chart_data);
-                    var options = {
-                        title: 'نمودار دایره ای موجودی انبار'
-                    };
-                    var chart = new google.visualization.PieChart(document.getElementById('chart'));
-                    chart.draw(data, options);
-                }
-                google.charts.load('current', {'packages':['corechart']});
-                google.charts.setOnLoadCallback(drawChart);
+                drawchart(data,chart_shape,chart_title);
             }).error(function(err){
                 if(err){
                     console.log(err);
@@ -785,41 +748,20 @@ $(document).ready(function(){
             });
         });
         $('#draw_line').click(function ()   {
+            chart_shape = 'line';
+            chart_title = 'نمودار میله ای کالاهای فروخته شده';
             var from_date = $('#from_date').val();
             var to_date = $('#to_date').val();
             _data.from_date = Date.parse(from_date);
             _data.to_date = Date.parse(to_date);
-            _data._type = $('#type_select').val();
-            _data.chart_num = 3;
+            _data._type = getcategory($('#type_select').val());
+            _data.chart_num = getchart(chart_type);
             $.ajax({
                 url:'/chart',
                 method:'POST',
                 data: _data
             }).success(function(data){
-                var chart_data = [];
-                var each_data = [];
-                each_data.push('Brand');
-                each_data.push('تعداد');
-                each_data.push( { role: 'style' } );
-                chart_data.push(each_data);
-                data.forEach(function(index){
-                    each_data = [];
-                    each_data.push(index._id);
-                    each_data.push(index.totalAmount);
-                    each_data.push('color: '+getRandomColor());
-                    chart_data.push(each_data);
-                });
-                function drawBasic() {
-                    var data = google.visualization.arrayToDataTable(chart_data);
-                    var options = {
-                        title: 'نمودار میله ای موجودی انبار'
-                    };
-
-                    var chart = new google.visualization.ColumnChart(document.getElementById('chart'));
-                    chart.draw(data, options);
-                }
-                google.charts.load('current', {packages: ['corechart', 'bar']});
-                google.charts.setOnLoadCallback(drawBasic);
+                drawchart(data,chart_shape,chart_title);
             }).error(function(err){
                 if(err){
                     console.log(err);

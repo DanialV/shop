@@ -18,12 +18,6 @@
     <script src="ism/js/ism-2.2.min.js"></script>
 </head>
 <body>
-<% if(typeof data.enroll_res != 'undefined'){%>
-<div id="alert">
-    <a class="alert" href="#alert" style="top:10px"><%=data.enroll_res%></a>
-</div>
-<%data.enroll_res = undefined%>
-<%}%>
 <div class="container-fluid bg-1">
     <div class="container bg-2">
         <div class="header">
@@ -58,19 +52,6 @@
                     <ul class="nav navbar-nav navbar-right" id="home">
                         <li class="active"><a href="/">صفحه اصلی</a></li>
                     </ul>
-
-                    <!--<%if(data.sess.role == 2){%>-->
-                    <!--<ul class="nav navbar-nav navbar-right" id="product">-->
-                        <!--<li class="dropdown">-->
-                            <!--<a class="dropdown-toggle" data-toggle="dropdown" href="#">‍‍‍‍‍‍‍ پنل مدیریت<span class="caret"></span></a>-->
-                            <!--<ul class="dropdown-menu navbar-inverse">-->
-                                <!--<li><a class="text-right" href="#user_management_pop" data-toggle="modal">مدیریت کاربران</a></li>-->
-                                <!--<li><a class="text-right" data-dismiss="modal" data-toggle="modal" href="#goods_management_pop">مدیریت انبار</a></li>-->
-                                <!--<li><a class="text-right" data-dismiss="modal" data-toggle="modal" href="#report_management_pop">گزارش گیری</a></li>-->
-                            <!--</ul>-->
-                        <!--</li>-->
-                    <!--</ul>-->
-                    <!--<%}%>-->
 
                     <ul class="nav navbar-nav navbar-right" id="product">
                         <li class="dropdown">
@@ -121,40 +102,39 @@
         </div>
         <!--////////////Modal Segment//////////-->
 
-        <!-- signin Modal -->
-        <div class="modal fade" id="login_pop" role="dialog">
-            <div class="modal-dialog">
+    <!-- signin Modal -->
+    <div class="modal fade" id="login_pop" role="dialog">
+        <div class="modal-dialog">
 
-                <!-- Modal content-->
-                <div class="modal-content">
-                    <div class="modal-header" style="padding:15px 250px;">
-                        <h4 dir="rtl"><span class="glyphicon glyphicon-lock"></span> ورود</h4>
-                    </div>
-                    <div class="modal-body" style="padding:40px 50px;">
-                        <form action="/login" method="post">
-                            <div dir="rtl" class="form-group">
-                                <label for="usrname"><span class="glyphicon glyphicon-user"></span> نام کاربری </label>
-                                <input type="text" class="form-control" name="username">
-                            </div>
-                            <div dir="rtl" class="form-group">
-                                <label for="psw"><span class="glyphicon glyphicon-eye-open"></span> کلمه عبور </label>
-                                <input type="password" class="form-control" name="password">
-                            </div>
-                            <div dir="rtl">
-                                <input type="checkbox" name="checkboxe" checked><label>مرا به خاطر بسپار</label>
-                            </div>
-                            <button type="submit" class="btn btn-success btn-block"><span class="glyphicon glyphicon-off"></span> ورود</button>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-danger btn-default pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> بستن</button>
-                        <a class="pull-right" data-dismiss="modal" data-toggle="modal" href="#signup_pop"> ثبت نام</a>
-                        <p class="pull-right">  -  بازیابی<a href="#"> پسورد</a> </p>
-                    </div>
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header" style="padding:15px 250px;">
+                    <h4 dir="rtl"><span class="glyphicon glyphicon-lock"></span> ورود</h4>
                 </div>
-
+                <div class="modal-body" style="padding:40px 50px;">
+                    <form action="/login" method="post">
+                        <div dir="rtl" class="form-group">
+                            <label for="usrname"><span class="glyphicon glyphicon-user"></span> نام کاربری </label>
+                            <input type="text" class="form-control" name="username">
+                        </div>
+                        <div dir="rtl" class="form-group">
+                            <label for="psw"><span class="glyphicon glyphicon-eye-open"></span> کلمه عبور </label>
+                            <input type="password" class="form-control" name="password">
+                        </div>
+                        <div dir="rtl">
+                            <input type="checkbox" name="checkboxe" checked><label>مرا به خاطر بسپار</label>
+                        </div>
+                        <button type="submit" class="btn btn-success btn-block"><span class="glyphicon glyphicon-off"></span> ورود</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-danger btn-default pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> بستن</button>
+                    <a class="pull-right" data-dismiss="modal" data-toggle="modal" href="#signup_pop"> ثبت نام</a>
+                    <p class="pull-right">  -  بازیابی<a href="#"> پسورد</a> </p>
+                </div>
             </div>
-        </div>
+         </div>
+    </div>
     </div>
 
     <!-- signup Modal -->
@@ -194,7 +174,7 @@
 
         </div>
     </div>
-</div>
+    </div>
 
 <!-- User_Edit Modal -->
 <div class="modal fade" id="user_edit_pop" role="dialog">
@@ -573,13 +553,13 @@
                 <div class="panel panel-primary">
                     <div class="panel-heading text-center"><%=data.goods_data[index].title%></div>
                     <input class="hidden" id="inp_good_id" value="<%=data.goods_data[index]._id%>"/>
-                    <div class="panel-body"><a href="#show_goods_pop" data-toggle="modal"><img class="img-responsive center-block panel-size goods-detail" src="<%=data.goods_data[index].image_address %>" alt="Img" value="<%=data.goods_data[index]._id%>"></a></div>
+                    <div class="panel-body"><a href="#show_goods_pop" data-toggle="modal"><img class="img-responsive center-block panel-size goods-detail" src="/img/<%=data.goods_data[index]._id%>" alt="Img" value="<%=data.goods_data[index]._id%>"></a></div>
                     <div class="panel-footer text-right">
                         <%if(data.goods_data[index].count != 0){%>
                         <button class="btn btn-primary glyphicon glyphicon-shopping-cart basket" id="btn-basket" value="<%=data.goods_data[index]._id%>">اضافه کردن به</button>
                         <span class="pull-left price_spn" id="price_spn"><%=data.goods_data[index].price%> تومان</span>
                         <%}else{%>
-                        <button disabled class="btn btn-primary glyphicon glyphicon-shopping-cart basket" id="btn-basket" value="<%=data.goods_data[index]._id%>">اضافه کردن به</button>
+                        <button disabled class="btn btn-primary glyphicon glyphicon-shopping-cart basket" value="<%=data.goods_data[index]._id%>">اضافه کردن به</button>
                         <span class="pull-left price_spn" id="price_spn">نا موجود!</span>
                         <%}%>
                     </div>

@@ -15,7 +15,13 @@ module.exports = function(app) {
     });
     app.route('/chart').post(function(req, res) {
         var data = req.body;
+        var result = {};
         if(data.chart_num == 1){
+            if(data.chart_type == 0){
+                result.shape = 0;
+            }else{
+                result.shape = 1;
+            }
             if(data._type != 'تمام محصولات'){
                 db.goods.aggregate([
                     { $match: { time: { $gte: parseInt(data.from_date), $lte: parseInt(data.to_date) }, category: data._type }},
@@ -29,7 +35,7 @@ module.exports = function(app) {
                     if (err) {
 
                     } else {
-                        res.json(info)
+                        res.json(info);
                     }
                 });
             }
@@ -46,7 +52,7 @@ module.exports = function(app) {
                     if (err) {
 
                     } else {
-                        res.json(info)
+                        res.json(info);
                     }
                 });
             }
@@ -290,7 +296,7 @@ module.exports = function(app) {
         req.session = null;
         res.redirect('/');
     });
-  app.get('/img', function(req, res, next) {
+    app.get('/img', function(req, res, next) {
         try {
             db.goods.findOne({}, function(err, doc) {
                 if (err)
@@ -326,7 +332,6 @@ module.exports = function(app) {
         data.img = {};
         data.img.image = req.file.buffer;
         data.img.contentType = req.file.mimetype;
-        // console.log(data);
         if (data.code.trim() != '' && data.model.trim() != '') {
             db.goods.findOne({
                 code: data.code
@@ -339,8 +344,6 @@ module.exports = function(app) {
                         temp.sales_count = 0;
                         var time = new Date().toDateString();
                         temp.time = Date.parse(time);
-                        // console.log(temp);
-
                         temp.save(function(err) {
                             if (err) {
                                 res.sendStatus(500);
@@ -628,7 +631,6 @@ module.exports = function(app) {
 
     app.route('/add_cart').post(function(req, res) {
         var data = req.body;
-        // console.log(data);
         db.users.findOne({
             _id: data.user_id
         }, {}, function(err, result) {
@@ -737,7 +739,6 @@ module.exports = function(app) {
         var count = 0;
         var cnt = 0;
         var data = req.body;
-        // console.log(data);
         Object.keys(data).forEach(function(value, index) {
             if (cnt == g_i_index) {
                 db.goods.findOne({
@@ -801,7 +802,8 @@ module.exports = function(app) {
         if (req.body.search_input.trim() == '') {
 
         } else {
-            var data = new RegExp(req.body.search_input, 'i');
+            // console.log(req.body.search_input);
+            var data = new RegExp(req.body.search_input.trim(), 'i');
             db.goods.find({
                 $or: [{
                     'brand': data
@@ -819,21 +821,38 @@ module.exports = function(app) {
                 if (err) {
                     res.sendStatus(500);
                 } else {
-                    result.search_input = req.body.search_input;
+                    result.search_input = req.body.search_input.trim();
                     if (typeof req.session.role == 'undefined') {
+                        var _data = {};
+                        _data.sess = 0;
+                        _data['goods_data'] = result;
                         res.render('search', {
-                            data: {
-                                role: 0,
-                                goods_data: result
-                            }
+                            data: _data
                         });
                     } else {
-                        let _data = req.session;
+                        var _data = {};
+                        _data.sess = req.session;
                         _data['goods_data'] = result;
                         res.render('search', {
                             data: _data
                         });
                     }
+                    // console.log(result);
+                    // if (typeof req.session.role == 'undefined') {
+                    //     res.render('search', {
+                    //         data: {
+                    //             role: 0,
+                    //             goods_data: result
+                    //         }
+                    //     });
+                    // } else {
+                    //     let _data = req.session;
+                    //     _data['goods_data'] = result;
+                    //     // console.log(_data);
+                    //     res.render('search', {
+                    //         data: _data
+                    //     });
+                    // }
                 }
             })
         }

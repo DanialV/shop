@@ -6,7 +6,7 @@ mongoose.Promise = global.Promise;
 var Schema = mongoose.Schema;
 
 // making schemas for inserting data in mongo
-var users_schema = Schema({
+var usersSchema = Schema({
     first_name: String,
     last_name: String,
     username: String,
@@ -20,7 +20,7 @@ var users_schema = Schema({
     credit: String,
     validation: Boolean
 });
-var goods = Schema({
+var goodsSchema = Schema({
     title: String,
     brand: String,
     category: String,
@@ -43,22 +43,10 @@ var goods = Schema({
     sales_count: Number,
     time: Number
 });
-var report_schema = Schema({
-    user_id: String,
-    header: String,
-    content: String
-});
-var logs_schema = Schema({
-    log: String
-});
-
-
 
 module.exports = (function() {
     var _return = {};
-    _return.users = mongoose.model('users', users_schema);
-    _return.logs = mongoose.model('log', logs_schema);
-    _return.goods = mongoose.model('goods', goods);
-    _return.reports = mongoose.model('reports', report_schema);
+    _return.users = mongoose.model('users', usersSchema);
+    _return.goods = mongoose.model('goods', goodsSchema);
     return _return;
 })();
